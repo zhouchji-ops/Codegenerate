@@ -16,6 +16,7 @@ p.add_argument('--xr1-repo',required=True);p.add_argument('--output',required=Tr
 p.add_argument('--manifest',required=True)
 p.add_argument('--steps',type=int,default=32)
 p.add_argument('--lr',type=float,default=3e-6)
+p.add_argument('--monitor-every',type=int,default=0)
 a=p.parse_args()
 out=Path(a.output).resolve()
 code_root=Path(__file__).resolve().parents[1]
@@ -121,12 +122,22 @@ def forward_one(sample, seed, training):
     with torch.autocast('cuda',dtype=torch.bfloat16):
         losses=policy.model(**kwargs)
     return losses['MSE']+losses['CE']
-def evaluate():
+def evaluate(samples=None):
+    samples=dev if samples is None else samples
     policy.eval()
-    with torch.no_grad():values=[float(forward_one(s,9000+i,False)) for i,s in enumerate(dev)]
+    with torch.no_grad():values=[float(forward_one(s,9000+i,False)) for i,s in enumerate(samples)]
     assert np.isfinite(values).all()
     return values
-before=evaluate();record(dev_baseline_losses=before,dev_baseline_mean=float(np.mean(before)))
+probe=train[::2][:8]  # Shared human slots in both matched-budget arms.
+before=evaluate();record(dev_baseline_losses=before,dev_baseline_mean=float(np.mean(before)),
+    train_probe_baseline=evaluate(probe),monitor_every=a.monitor_every)
+monitor=[]
+def checkpoint_metrics(step):
+    row={'step':step,'train_probe':evaluate(probe),'dev':evaluate()}
+    monitor.append(row)
+    (out/'monitor.json').write_text(json.dumps(monitor,indent=2))
+    print('MONITOR '+json.dumps(row),flush=True)
+if a.monitor_every:checkpoint_metrics(0)
 rows=[]
 start=time.monotonic()
 for step in range(a.steps):
