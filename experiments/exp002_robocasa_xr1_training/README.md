@@ -650,3 +650,37 @@ have now passed. Human/quarter/natural dev flow loss is0.342037/0.356238/
 These losses do not imply task improvements. Primary rollouts are underway;
 the oldquarter512 already succeeds on6/6, so any new-arm success must be
 compared with this same-budget control rather than only old256-step results.
+
+### Dose512 primary-development outcome
+
+All18 natural-development rollouts completed and passed exact paired initial
+XML/state/state14/three-RGB/canonical/query/full-metadata checks. Steps6101..6106:
+- Human512:221/279/228/236/F600/F600, official4/6.
+- Old-quarter512:224/227/210/227/517/289, official6/6.
+- Natural64_512:220/182/328/249/F600/296, official5/6.
+
+Separate offline stability counts are3/6,6/6,4/6 respectively. Human6101 and
+natural6102 satisfy official success but fail the unchanged strict stability
+gate. They are not silently removed or relabeled as official failures.
+Old-quarter512 exceeds human512 here by two cases; new11-group data does not
+outperform the existing generated-data control. This is adaptive development
+evidence, not an independently confirmed generalization improvement.
+
+The prespecified cross retention check is now running after each GPU's primary
+pipeline releases it. New snapshot copies retain identical model/state/RGB/
+canonical bytes; a new full-metadata hash seal and old-source hashes are saved.
+Old snapshots are unmodified. This proves current three-arm input identity,
+not retrospectively the old256-step runs' full episode-metadata identity.
+All three arms and all six cross cases are retained. No sealed6201..6206 case
+is revisited; any subsequent final claim requires new unseen evaluation.
+
+Old-quarter provenance audit: its64 policy slots comprise21 box,21T-grip and
+22bridge samples, taken from19 original-policy trajectories over18 distinct
+assets (six per family; rigid00 has two seeds). The new natural64 set comprises
+11trajectories/11assets (fiveT, sixbridge), with32 slots per family and no boxes.
+The old teacher trajectories mostly use seed0, with rigid00/seed1 and
+bridge04/seed2 exceptions. Both sources are successful policy rollouts, not
+expert demonstrations. Differences include geometry-family coverage, scene
+initialization/layout, trajectory content and sampling weights. Success does
+not isolate one causal3D-generation factor. Keep these confounds with the
+result rather than crediting the latest scene generator automatically.
