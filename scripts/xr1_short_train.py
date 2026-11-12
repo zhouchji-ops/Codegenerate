@@ -17,6 +17,7 @@ p.add_argument('--manifest',required=True)
 p.add_argument('--steps',type=int,default=32)
 p.add_argument('--lr',type=float,default=3e-6)
 p.add_argument('--monitor-every',type=int,default=0)
+p.add_argument('--evaluate-expert',type=Path)
 a=p.parse_args()
 out=Path(a.output).resolve()
 code_root=Path(__file__).resolve().parents[1]
@@ -129,6 +130,17 @@ def evaluate(samples=None):
     assert np.isfinite(values).all()
     return values
 probe=train[::2][:8]  # Shared human slots in both matched-budget arms.
+if a.evaluate_expert:
+    delta=torch.load(a.evaluate_expert,map_location='cpu',weights_only=True)
+    expected_trainable={n for n,p in policy.named_parameters() if p.requires_grad}
+    assert set(delta)==expected_trainable
+    current=policy.state_dict()
+    assert all(current[k].shape==v.shape and torch.isfinite(v).all() for k,v in delta.items())
+    result=policy.load_state_dict(delta,strict=False)
+    assert not result.unexpected_keys
+    record(evaluated_expert=str(a.evaluate_expert),train_probe_final=evaluate(probe),
+        dev_final=evaluate(),optimizer_steps=0,full_expert_keys=len(delta))
+    raise SystemExit(0)
 before=evaluate();record(dev_baseline_losses=before,dev_baseline_mean=float(np.mean(before)),
     train_probe_baseline=evaluate(probe),monitor_every=a.monitor_every)
 monitor=[]
@@ -153,9 +165,10 @@ for step in range(a.steps):
     rows.append(row)
     with (out/'steps.jsonl').open('a') as f:f.write(json.dumps(row)+chr(10))
     print(json.dumps(row),flush=True)
+    if a.monitor_every and (step+1)%a.monitor_every==0:checkpoint_metrics(step+1)
 after=evaluate()
 record(real_optimizer_steps=a.steps,dev_after_losses=after,dev_after_mean=float(np.mean(after)),
-    train_seconds=time.monotonic()-start,peak_gpu_gib=torch.cuda.max_memory_allocated()/1024**3,
+    train_probe_final=evaluate(probe),train_seconds=time.monotonic()-start,peak_gpu_gib=torch.cuda.max_memory_allocated()/1024**3,
     limitation='Held-out demonstration flow loss only; no task success improvement claim.')
 torch.save({n:p.detach().cpu() for n,p in policy.named_parameters() if p.requires_grad},out/'expert_final.pt')
 torch.save(optimizer.state_dict(),out/'optimizer_final.pt')
