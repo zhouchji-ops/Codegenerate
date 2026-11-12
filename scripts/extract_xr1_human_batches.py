@@ -12,6 +12,12 @@ a=p.parse_args()
 root=Path(__file__).resolve().parents[1]
 if a.out.resolve()==root or root in a.out.resolve().parents:raise ValueError('External outputs required')
 a.out.mkdir(parents=True,exist_ok=False)
+def sha256_file(path):
+ h=hashlib.sha256()
+ with path.open('rb') as f:
+  for chunk in iter(lambda:f.read(1<<20),b''):h.update(chunk)
+ return h.hexdigest()
+source_hashes={name:sha256_file(a.source/name) for name in ('smoke_episode_manifest.json','counter_to_sink_selected.parquet')}
 spec=json.loads(a.spec_json.read_text());items=spec["samples"]
 episodes={x["episode_index"]:x for x in json.loads((a.source/"smoke_episode_manifest.json").read_text())}
 df=pd.read_parquet(a.source/"counter_to_sink_selected.parquet")
@@ -29,7 +35,7 @@ for item in items:
  data={"state_history_raw16":np.stack(d.iloc[h]["observation.state"]).astype("float32"),"actions_raw12":np.stack(d.iloc[future]["action"]).astype("float32"),"history_frame_indices":h,"action_frame_indices":future}
  assert data["state_history_raw16"].shape==(4,16) and data["actions_raw12"].shape==(16,12)
  assert np.isfinite(data["state_history_raw16"]).all() and np.isfinite(data["actions_raw12"]).all()
- meta=dict(episode_index=ei,sample_step=t,split=split,task=e["tasks"][0],history_indices=h.tolist(),action_indices=future.tolist(),source_revision="3f72c9307b4a132dd55e1433e2dda0f54bb8c1d0",raw_only=True,video_timestamps={},video_actual_timestamps={},source_hashes={})
+ meta=dict(episode_index=ei,sample_step=t,split=split,task=e["tasks"][0],history_indices=h.tolist(),action_indices=future.tolist(),declared_source_revision="3f72c9307b4a132dd55e1433e2dda0f54bb8c1d0",raw_only=True,video_timestamps={},video_actual_timestamps={},source_hashes={})
  samples.append((data,meta))
 for cam,file in cams.items():
  targets={}
@@ -52,7 +58,7 @@ for cam,file in cams.items():
   if not targets:break
  container.close();assert not targets,"missing target frames"
  print("decoded",cam,flush=True)
-manifest={"samples":[],"source_revision":"3f72c9307b4a132dd55e1433e2dda0f54bb8c1d0","spec_sha256":hashlib.sha256(a.spec_json.read_bytes()).hexdigest(),"note":"raw16 dataset order, raw12 actions, RGB THWC. No normalization/padding/crop. Development is not final test."}
+manifest={"source_files_sha256":source_hashes,"revision_verification":"revision is supplied provenance; this extractor hashes local files but does not query HF","samples":[],"declared_source_revision":"3f72c9307b4a132dd55e1433e2dda0f54bb8c1d0","spec_sha256":hashlib.sha256(a.spec_json.read_bytes()).hexdigest(),"note":"raw16 dataset order, raw12 actions, RGB THWC. No normalization/padding/crop. Development is not final test."}
 for data,meta in samples:
  stem=meta["split"]+"_ep"+str(meta["episode_index"])+"_t"+str(meta["sample_step"])
  np.savez_compressed(a.out/(stem+".npz"),**data);(a.out/(stem+".json")).write_text(json.dumps(meta,indent=2))
