@@ -826,3 +826,60 @@ result. Source: scripts/prepare_xr1_natural22_dose_pilot.py and
 scripts/xr1_seeded_training_probe.py; tests/test_natural22_pilot.py.
 CPU suite163 tests passed, one optional dependency skip; repository gate82
 files, zero issues.
+
+### Coverage512 development completion and failure diagnosis
+
+All36 paired rollouts and physical/history audits completed. Three fresh
+512-step/reload gates passed; human/11-group/22-group training took387.34/
+383.19/402.11s, peak21.05GiB. Dev flow losses0.33544/0.35563/0.32333 do not
+predict task ranking. Natural cases6101..6106, steps:
+- Human:227/187/315/236/F600/292; official5/6, extra strict gate4/6.
+- Natural11:403/209/323/239/F600/302; official5/6, extra strict gate4/6.
+- Natural22:220/215/226/251/F600/304; official5/6, extra strict gate5/6.
+Cross cases2001..2006:
+- Human:217/176/193/198/F600/F600; official4/6, strict3/6.
+- Natural11:223/178/196/272/305/F600; official5/6, strict4/6.
+- Natural22:229/184/193/F600/188/F600; official4/6, strict3/6.
+Thus totals9/12,10/12,9/12. More trajectories and lower offline loss did not
+improve success;22-group regresses on2004 relative to11-group. These are
+adaptive DEVELOPMENT results, not final confirmation.
+Complete result seal:
+`5e5111ef354d4860c8869e79eb734d29d5cd7465a782f24113a935388ae2d8fd`.
+
+Offline visibility audits used the actual saved policy query indices for all
+three arms on6105/2004/2006. On2006, every one of38 queries (149 history states)
+has zero target geom-ID pixels in all three cameras, before and after crop.
+This suggests an observation-recovery challenge, not proof the task is
+unsolvable or that the policy internally fails to recognize a visible target.
+On6105 all38 queries have some target pixels; initially only52 survive in the
+right camera. Human first lifts at563, natural11 first contacts at566 without
+lifting, natural22 never contacts. On2004 every query has visible target pixels;
+human/natural11 first lift105/182, whereas natural22 first lifts524 and fails
+within600. The masks are offline diagnostics, not actual policy input or
+semantic recognizability guarantees. No sealed final cases were used here.
+
+### RGB-only observation-prefix exploratory development trial
+
+Nine new paired runs are preregistered:6105/2004/2006 with none, fixed20, rgb80.
+All use the same natural11_cov512 checkpoint and frozen initial inputs.
+The fixed control issues20 legal base-yaw commands(+0.25). RGB mode uses a
+bounded sweep(+0.25 for20,-0.25 for40,+0.25 for20), stopping early if any actual
+cropped RGB camera contains64 pixels satisfying B>80,B>1.3G,B>1.5R. Base-mode
+command is1; all other commands are0. This is a rough blue-color heuristic,
+not a semantic object detector; blue-background false positives are possible.
+The control helper receives RGB only, never object pose, geom IDs, segmentation
+or visibility-audit outcomes. The instruction already names a blue block.
+
+Every prefix action counts toward the SAME600-action horizon; no extra budget.
+Fresh no-intervention controls are included. Real observation histories are
+retained, policy query times and prefix actions recorded separately, and every
+mode starts a separately seeded server. Common noise is by query index, not
+absolute step after a delay. Success, intervention cost, queries, physical
+checks and offline visibility will all be reported. A gain would not isolate
+information: pose and action timing also change. All outcomes are exploratory,
+not original XR1 benchmark scores or expert demonstrations; no training occurs.
+Frozen protocol SHA256:
+`c285b35fd0c3eda6efb8bad62d5924a24c274ce6dc01cd5c6a04ee9aa20215e9`.
+Source: scripts/rgb_observation_prefix.py and scripts/collect_rgb_prefix_rollout.py;
+tests/test_rgb_observation_prefix.py. Queues are running; no completed gain is
+claimed in this entry.
