@@ -1091,3 +1091,44 @@ by policy failures. No existing sealed outcomes will choose those final cases.
 Native-control preregistration SHA256:
 `3ab0c488b847b86663a908e0292bbbe0197af1a9497a73fb18ebb39029d564b5`.
 Native adapter and collector source are included; runtime observations remain external.
+
+### Fixed native candidate budget completed; matched six-pair SFT started
+
+All twelve native candidates (6001-6012) were retained. Eleven reach official
+success, but only seven pass strict physical stability AND sustained pickup:
+6001, 6003, 6004, 6008, 6009, 6010, 6012. No replacement candidates were added.
+The common eligible-seed intersection with the generated natural11 source is
+6001, 6004, 6008, 6009, 6010, 6012. Native6003 is excluded from this paired dose
+because its generated counterpart failed. This selection uses training admission,
+not evaluation ranking. Same seed is not guaranteed identical initialization,
+native category, language, mass, layout or random-number consumption.
+
+The first XML integrity pass rejected raw byte differences. Investigation found
+explicit mesh content-type insertion and last-digit quaternion re-normalization
+from MuJoCo serialization. The original failure logs remain. All ten remaining
+rollouts pass independent source recompilation/re-serialization comparisons after
+normalizing ONLY correct .obj/model-obj and .stl/model-stl MIME declarations;
+all other elements and attributes match the independently serialized source.
+Initial full simulator states and three canonical camera inputs are exact.
+This is not a claim that original and serialized XML bytes are identical.
+
+Two new SFT arms use six trajectories EACH and 64 unique policy anchors TOTAL
+per arm, not 6x64. Per-trajectory quotas are 11/11/11/11/10/10 in shared-seed
+order, with matching approach quotas 6/5/6/5/5/5 and complementary grasp/lift
+quotas. Thus each arm has exactly 32 approach and 32 grasp/lift windows. Anchors
+are unique within episode; all use true pre-action t-6,t-4,t-2,t observations
+and complete future16 actions. No failed grasp admission was relaxed. Both use
+identical 192 human replay slots and eight human dev samples. A 256-slot schedule
+runs twice: 512 optimizer calls, 128 policy-sample calls from 64 unique policy
+windows. Overlapping adjacent action windows are not independent demonstrations.
+
+Initialization seed20261114, training noise30000+step, lr3e-6, batch1, monitoring
+at0/128/256/384/512 and fixed final-step selection are shared. Both pipelines
+are training on separate GPUs and will independently reload all407 expert keys
+and compare fixed dev/train-probe losses. At launch, both have exactly the same
+baseline loss vectors; observed GPUs each use15257MiB at86-87% utilization.
+No final evaluation is launched and the already-read six-case pilot is not reused
+as fresh confirmation. Phase-balanced matching is a new recipe, not the earlier
+uniform natural11 recipe. All earlier adverse results remain part of the record.
+Frozen matched-data/training protocol SHA256:
+`8ff0e0a3b771137f8f2543ed3587afd9df1ef6b24e54d3481ff697e91663276f`.
