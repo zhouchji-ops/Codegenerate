@@ -606,3 +606,47 @@ development snapshots, preserving failed gates and recording the provenance
 limit. Both weight hashes were frozen before rollout; no6201..6206 evaluation
 or tuning is permitted. Twelve rollouts plus paired and physical audits are
 running. This assesses training variability, not an independent final test.
+
+### Eleven-group16-slot development outcomes
+
+Both independent runs completed and all12 paired/physics/history audits ran.
+Legacy6101..6106:221/217/228/239/F600/329; monitored:
+220/296/347/239/F600/330. Both are5/6, not an improvement over human-only5/6.
+The monitored6102 official success fails the separate strict stability gate:
+angular speed0.1156->0.1082rad/s exceeds the unchanged0.1rad/s limit, while
+horizontal containment remains true and1-second displacement is only0.068mm.
+This is not evidence of falling out of the basin. Keep official and strict
+outcomes separate. Both6105 failures eventually lift, only at586/551 steps.
+
+### Fixed three-arm dose/step comparison
+
+The next bounded experiment actually trains THREE fresh512-step arms:
+human-only; quarter replay with192human+64old policy slots; and natural64
+with the identical192human slots plus64new policy anchors from11train groups.
+The last arm allocates32 anchors per shape family,5..7 per group, across the
+full valid trajectory interval. All64(scene,step) anchors are distinct, but
+nearby temporal windows and same-trajectory dependence still exist.
+
+The256-slot schedule repeats twice, not512 independent demonstrations.
+Human/quarter/natural have90/103/95 distinct episode IDs and180/199/199 distinct
+episode-step pairs. The two mixed arms preserve the same192human slots; all
+three share the same eight human-dev samples, original checkpoint, lr3e-6,
+seed/noise recipe, final-step selection and5monitor points0/128/256/384/512.
+Existing256-step baselines are not substituted for newly trained controls.
+
+Source arrays, manifest hashes and episode separation pass before training.
+Protocol hash:
+`ae70e2eebbbe19928671241a794a23dec091a764be45fbb8da5c485e91421493`.
+An inherited descriptive comparison string is corrected in a separate file;
+actual frozen arms, budgets, selection and execution settings are unchanged.
+Primary comparison is all six natural DEVELOPMENT cases6101..6106; old
+cross00..05 are prespecified secondary retention checks with their historical
+full-metadata-hash limitation. Sealed6201..6206 are never rerun for selection;
+any subsequent claim needs a new previously unseen final evaluation.
+
+All three512-step trainings and fresh-process407-key/dev/probe reload gates
+have now passed. Human/quarter/natural dev flow loss is0.342037/0.356238/
+0.352047; training plus monitors390.71/383.48/383.90s, peak21.05GiB each.
+These losses do not imply task improvements. Primary rollouts are underway;
+the oldquarter512 already succeeds on6/6, so any new-arm success must be
+compared with this same-budget control rather than only old256-step results.
