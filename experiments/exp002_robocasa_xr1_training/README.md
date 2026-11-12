@@ -585,3 +585,24 @@ all407 final expert tensors exactly, contain monitors0/64/128/192/256, and pass
 fresh-process development/probe reload checks. A mismatch blocks evaluation
 and must be reported, not labeled equivalent. This replay consumes additional
 compute but is not256 extra continuation steps or an independent replicate.
+
+The equality gate FAILED:407/407 final tensors differ, maximum absolute
+parameter difference0.0002266386291. The first discrepancy is already in the
+step1 gradient norm (22.00736046 vs22.00736427), followed by different step2
+losses, before the first periodic monitor. Sample identities/order match.
+Floating-point nondeterminism is a hypothesis, not an established cause.
+Therefore the runs are not an equivalent replay. Both are retained as
+same-recipe independent runs; neither is selected by lower loss.
+
+The legacy run completed256 steps in183.27s, dev loss0.3409862630; the monitored
+run completed256 steps plus all five monitors in208.12s, dev loss0.3396214824.
+Both peaked at21.05GiB. Each independently reloads407 keys and reproduces its
+own eight-dev loss array exactly. The monitored run also reproduces its final
+human training-probe array; the legacy run did not record that array, so its
+corresponding equality cannot be established. No missing monitor is invented.
+
+A separate explicit protocol now compares BOTH runs on all six6101..6106
+development snapshots, preserving failed gates and recording the provenance
+limit. Both weight hashes were frozen before rollout; no6201..6206 evaluation
+or tuning is permitted. Twelve rollouts plus paired and physical audits are
+running. This assesses training variability, not an independent final test.
