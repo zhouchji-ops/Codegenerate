@@ -203,3 +203,36 @@ human training probes, mean loss was 0.1363142561 initially, 0.1153661637 after
 human-only, and 0.1318463283 after mixed. These endpoints do not replace the
 missing intermediate overfitting curves. All 512 step records have contiguous
 indices and finite loss/gradient norms.
+
+### Six-case rollout result and one-factor replay-ratio follow-up
+
+The frozen six cross-family cases completed for all three arms. Model XML,
+initial full simulation state, state14 and all three first images were exact
+across arms; all 18 trajectories passed format integrity checks.
+
+- Original: 4/6 official successes.
+- Human-only 256: 5/6.
+- 50% generated mixed 256: 5/6.
+
+The shared fine-tuning gain cannot be attributed to generated geometry.
+Cross05 failed for every arm. On cross04 the human-only and mixed arms needed
+356 and 561 steps; success rate alone hides this slowdown. The complete human
+versus mixed step pairs were 218/224, 177/176, 195/308, 373/198, 356/561, 600/600.
+These are six development cases, not a definitive population estimate.
+
+A bounded follow-up changes only the generated replay proportion to 25%:
+192 original human slots and 64 generated slots, all 19 generated trajectories
+represented, 256 optimizer steps from the same original checkpoint.
+Slots with zero-based index i%4==3 keep the prior 50%-mixed sample; every other
+slot restores the human-only control sample. Optimizer, learning rate, step
+noise seeds and final-checkpoint selection remain unchanged. The existing
+human-only/original/50%-mixed rollout results are reused, not redundantly rerun.
+Only the new checkpoint is evaluated on all six cases.
+
+This ratio was chosen after observing development outcomes and original-domain
+losses: it is an exploratory development adjustment, not a preregistered
+confirmatory result or proof that replay dilution caused failure. No cross
+development trajectory enters training; the elbow final-test family stays
+untouched. Failure-phase diagnosis is conducted independently from videos and
+target-contact history. The repaired interval-monitor hook is used in this
+new run and will be checked from actual output.
