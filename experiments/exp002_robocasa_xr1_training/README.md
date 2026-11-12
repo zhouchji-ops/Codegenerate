@@ -236,3 +236,43 @@ development trajectory enters training; the elbow final-test family stays
 untouched. Failure-phase diagnosis is conducted independently from videos and
 target-contact history. The repaired interval-monitor hook is used in this
 new run and will be checked from actual output.
+
+### Failure-stage evidence
+
+Independent target-contact history confirms that cross05 had zero active
+robot-target contact frames, zero dual-finger contact and no target lifting
+for all three original/human/50%-mixed arms; the maximum target-bottom change
+was approximately 1.9e-8 m. This is a target-reaching/selection failure, not
+evidence of a failed release. Videos suggest distractor/occlusion involvement,
+but that causal explanation remains a hypothesis.
+
+For cross04, first robot contacts were at steps 99/101/102 and first dual-finger
+contacts at 106/108/108 (original/human/mixed). Sustained lifting began at
+118/266/484; task success followed at 192/356/561. The mixed-vs-human delay is
+primarily contact-to-lift (218 steps later), not transport after lifting
+(77 versus 90 steps). This supports investigating approach/grasp/lift training
+coverage in independent training scenes rather than adding release-only data.
+Development trajectories are used for diagnosis only, never as training labels.
+
+### 25% replay training result
+
+The quarter-generated arm completed all 256 updates (192 human / 64 generated)
+with finite losses and gradients, saved final expert and optimizer states, and
+was independently reloaded with all 407 expert keys. Reloaded development and
+shared-human-probe arrays exactly match the training-end arrays.
+
+Actual interval-monitor means (step: human training probe / human development):
+
+- 0: 0.136314 / 0.355360
+- 64: 0.122493 / 0.345137
+- 128: 0.119687 / 0.348458
+- 192: 0.112440 / 0.342221
+- 256: 0.125747 / 0.344625
+
+The 256-step final model remains the evaluation checkpoint; the lower monitored
+192-step loss was not used to select a different model. Final human-development
+loss is between human-only (0.342719) and 50% mixed (0.346459), still worse than
+human-only. The monitor is non-monotonic on eight examples, not sufficient to
+establish a general overfitting law. Elapsed training including interval/final
+monitoring was 208.14 s, peak 21.05 GiB. The new-model six-case rollout is pending;
+existing control rollouts will be reused.
