@@ -920,3 +920,61 @@ It is development coverage, NOT a new held-out confirmation. Existing sealed fin
 sets are not used. Protocol SHA256:
 `e341f30e540cf56d0d58d9f0b2dd4d11775240ac18978df1980c12edce8bc7a1`.
 No parameter changes were selected from these extension results before launch.
+
+### Full development coverage: observation-prefix retention
+
+All 27 extension episodes completed, with all initial pairing checks passed.
+Across the original 3 and remaining 9 cases, all 36 runs match frozen initial
+simulator/state14 arrays, three RGB cameras, canonical observations, XML and
+source metadata. The extension is previously observed development data, not an
+independent confirmation set. Complete official results (steps include prefix):
+
+| Seed | none | fixed20 | rgb80 | RGB prefix actions |
+|---|---:|---:|---:|---:|
+| 2001 | S223 | S277 | S223 | 0 |
+| 2002 | S178 | S244 | S178 | 0 |
+| 2003 | S196 | S253 | S196 | 0 |
+| 2004 | S272 | F600 | S272 | 0 |
+| 2005 | S305 | F600 | S305 | 0 |
+| 2006 | F600 | F600 | F600 | 4 |
+| 6101 | S403 | F600 | S340 | 36 |
+| 6102 | S209 | S421 | S209 | 0 |
+| 6103 | S323 | S296 | S323 | 0 |
+| 6104 | S239 | S287 | S239 | 0 |
+| 6105 | F600 | F600 | S381 | 43 |
+| 6106 | S300 | S342 | S369 | 9 |
+
+Official totals are 10/12, 7/12 and 11/12. Total executed actions are 3848,
+5120 and 3635; prefix actions 0, 240 and 92; model queries 247, 313 and 228.
+Do not compare only successful-run speed: RGB slows 6106 while rescuing 6105.
+Extra physical and grasp-history reviews were still running at this table's
+creation; official completion does not imply all extra checks passed.
+
+Seven extension none runs exactly reproduce earlier actions, simulator states,
+state14, success flags and terminal states. Two do not: 2002 first differs in
+rendered RGB at step 47, then actions at 112; 6106 first differs in RGB at 180,
+then actions at 192, and succeeds at 300 versus earlier 302. Both are retained.
+The device assignment changed for some cases; this alone does not establish the
+cause of the discrepancy. All seven zero-prefix RGB extension episodes exactly
+match their CURRENT none controls in those numeric arrays. No full cross-run
+bitwise determinism is claimed.
+
+Next-design candidate, not launched: a fresh pre-registered paired 2x2 comparison
+of human_cov512 versus natural11_cov512, each without/with the frozen RGB prefix,
+would separate augmentation-associated and observation-associated differences
+better than comparing observation modes of a single checkpoint. Fix geometry
+clusters, initialization distribution, sample count, noise seeds, 600-step budget,
+physics metrics and analysis before policy outputs. Preserve natural22's adverse
+development findings and all model-selection history. Existing sealed final sets
+remain excluded from tuning. This is a proposal, not a completed confirmation.
+
+The subsequent review pass has now completed all 36 physics and history audits.
+Extra strict counts are none 8/12, fixed20 6/12, RGB 9/12; sustained dual-finger
+lift counts are 10/12, 7/12, 11/12. All official-success exceptions to the extra
+rule are retained: 2001 rests on a sink distractor rather than directly on the
+sink in all three modes; 6102 none/RGB has intermittent residual angular motion
+above the settling threshold (only 0.064 mm net displacement). These are not
+claims that every rejected result is physically implausible or falls out.
+The combined result/audit seal is
+`dfd7a9281c27464bbf49f77a4c26c47aa5875bb1f8f7a31bd0fad2639cffd72f`.
+All queues have finished. No new GPU confirmation run has been launched.
