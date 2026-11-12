@@ -1171,3 +1171,5 @@ not overlap occupied GPUs and must pass the same admission/restoration gates.
 Only prechecking has started, not retention-policy evaluation. Two cases cannot
 establish broad retention; all outcomes must remain. Retention design SHA256:
 `18069f3407039307822b78d7c7376b181e2307892fdc75a1a416fb47b716a46d`.
+
+All12 initial admissions, all24 restore probes and all12 pre-policy difficulty measurements have passed. The36 main episodes and audits are now running on both GPUs. Initial cropped target-pixel counts span6-148 and target-distractor surface distances0.064-0.499m. Inset is not uniformly harder: retain the predefined placement strata rather than relabeling them by outcomes. The two native retention cases also passed admission/restoration; their six paired episodes are queued only after the main GPU queues finish. No policy outcomes have been used to modify these protocols.
