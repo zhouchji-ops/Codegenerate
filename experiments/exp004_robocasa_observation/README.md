@@ -7,8 +7,9 @@ experience improve observation acquisition without losing manipulation skills?
 This is a different question from grasp-phase reweighting in
 [exp002](../exp002_robocasa_xr1_training/README.md).
 
-Status: data qualification / protocol preparation. No observation-specific
-optimizer run has started. Do not count pose variants as independent scenes.
+Current status: the original three-group protocol was not met. A separately
+authorized two-group exploratory comparison is now training; see the final
+section for the frozen scope. Do not count pose variants as independent scenes.
 
 ## Why this experiment exists
 
@@ -174,3 +175,46 @@ identical scene_group weights, 16 new slots and the same 240 retained slots.
 This is prefix reweighting, not visibility isolated from pose or action phase.
 Record unique anchors and any repeated weighting explicitly. No v3 observation
 training has been launched or claimed successful.
+
+## Separately authorized two-group exploratory pilot (now running)
+
+The original three-group plan remains unmet; it has not been relabeled as
+successful. A later explicit decision permits a **separate two-group pilot**
+using the qualified bridge00/3007 and T02/3003 matched pairs. Four trajectories
+are still only two independent source scene_groups.
+
+Final paired-candidate manifest SHA-256:
+`94bb2164ac9e50f3efd0912d4d9fdb2eb981966d61eff0d26bd612f0395f8e6c`.
+
+Each group supplies one visible-start and one hidden-start trajectory.
+Lengths are 316/180 (bridge hidden/visible) and 359/209 (T02 hidden/visible).
+Bridge hidden reaches the >=20-pixel query at16 before first target contact183;
+T02 hidden reaches it at48 before contact123. Both visible controls meet the
+visibility condition at query0. Metadata-aware physical/history/fixture checks
+and all trajectory/review/query-evidence hashes pass.
+
+The executed comparison is frozen at:
+- Two arms, original checkpoint, 256 optimizer steps each, lr3e-6 and unchanged
+  optimizer/noise recipe; final step only.
+- Exactly 192 human plus 48 old generated slots unchanged between arms.
+- Sixteen new slots, eight per group, interleaved by group, at matching query
+  indices 0/16/32/48/64/80/96/112.
+- Visible-start versus hidden-start data differ only in those sixteen slots.
+- Four-frame history clamps at t0; every selected anchor has a complete
+  future16 action target. Privileged visibility counts never enter model arrays.
+- The original eight human-development samples remain identical.
+- Validation bridge05/5106 is absent from all training sources.
+
+An independent preparation audit checked the actual output manifests and NPZs:
+240 training slots and all development samples match, each group has eight new
+slots, t0 repeats the exact initial image/state four times, and only raw state14,
+action12 and the three camera arrays are passed to the model.
+
+Same query indices do not guarantee the same semantic action phase: yaw changes
+geometry and the teacher contacts the object at different times. Any difference
+therefore concerns this demonstration regime, not visibility in isolation.
+With two groups this remains an engineering/exploratory pilot, not broad
+generalization evidence. The natural hidden validation baseline has been run;
+its outcome is not used to revise the frozen data, learning rate or checkpoint
+selection. Observation-specific optimization began only after this separate
+authorization and four-trajectory qualification.
