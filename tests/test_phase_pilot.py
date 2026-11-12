@@ -2,8 +2,17 @@
 import sys,unittest
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
-from prepare_xr1_phase_pilot import anchors,require_training_family
+from prepare_xr1_phase_pilot import anchors,require_training_family,validate_unique_runs,validate_quarter_slots
 class PhaseTests(unittest.TestCase):
+    def test_duplicate_runs_rejected(self):
+        validate_unique_runs([{'run':'a'},{'run':'b'}])
+        with self.assertRaises(ValueError):validate_unique_runs([{'run':'a'},{'run':'a'}])
+    def test_shifted_quarter_pattern_rejected(self):
+        rows=[{'source':'policy_rollout_not_expert' if i%4==3 else 'human_dataset'} for i in range(256)]
+        validate_quarter_slots(rows)
+        rows[0],rows[3]=rows[3],rows[0]
+        self.assertEqual(sum(r['source']=='policy_rollout_not_expert' for r in rows),64)
+        with self.assertRaises(ValueError):validate_quarter_slots(rows)
     def test_reserved_families_rejected(self):
         require_training_family('t_grip');require_training_family('bridge')
         for family in ('cross','elbow'):
