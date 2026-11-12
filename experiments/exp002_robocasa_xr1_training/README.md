@@ -784,3 +784,45 @@ No new SFT training is claimed in this entry. The prior6024 reviewed rejection
 is not silently replaced or included.
 Collection protocol SHA256:
 `d43199d3a83a7acfe80e6732729fc76689f07b3642b917ede7c26f68573b9288`.
+
+### Coverage extension: 22 reviewed teacher trajectories
+
+TRAIN6013..6023 finished with 11/11 official successes at steps
+173/241/141/225/206/187/405/239/211/178/277. All22 restoration probes, all11
+physical/history audits, and independently checked saved initial state,
+three-camera canonical arrays, actual query schedules and trajectory integrity
+passed. They are successful original-XR1 policy pseudo-demonstrations, not
+independent experts. The old failures6003/6024 remain explicitly excluded.
+Accepted22 manifest SHA256:
+`2cf080d4b25ebc0166e04343ceef975bf6e3d33f80551e8326e9c640ea07e691`.
+
+A fresh three-arm development comparison is frozen and launched: human-only,
+the previous11-trajectory64-slot arm, and22-trajectory64-slot coverage arm.
+All three actually train512 optimizer steps from the original checkpoint,
+lr3e-6, initialization seed20261113, per-update noise20000+step; held-out
+human flow-loss/probe noise remains9000+i. Monitoring0/128/256/384/512 and
+independent407-key checkpoint reload must pass before each arm's rollouts.
+The new explicit-seed training script does not alter prior recipes/results.
+
+Both generated arms preserve the exact192 human slots, the same8 human dev
+samples, and the64 generated positions every fourth slot. Family weights stay
+32T/32bridge. The22-group arm has11 trajectories per family: ten get3 uniform
+quantile anchors and the last sorted group gets2. There are64 unique trajectory/
+step pairs, used twice over512 updates; these are not512 independent episodes.
+
+Variables are not reduced to initialization alone: old11 trajectories cover11
+assets, while22 cover12. T02 is newly admitted via seed6015; its old6003 failure
+is still excluded. Ten assets have two successful natural initializations;
+T02 andbridge05 each have one. Trajectory content and per-trajectory anchor
+density change along with coverage. No pure causal scene-diversity claim is
+licensed by this comparison.
+
+Development uses all six previous natural cases6101..6106 and all six cross
+cases2001..2006, reporting strata separately with identical frozen actual
+inputs. The old sealed final6201..6206 and completed elbow6401..6412 are not
+used for selection or rerun. A future independent evaluation will require its
+own frozen unseen initializations. Current work has not produced a new final
+result. Source: scripts/prepare_xr1_natural22_dose_pilot.py and
+scripts/xr1_seeded_training_probe.py; tests/test_natural22_pilot.py.
+CPU suite163 tests passed, one optional dependency skip; repository gate82
+files, zero issues.
