@@ -145,3 +145,30 @@ python scripts/prepare_xr1_mixed_pilot.py \
 ```
 Then supply the produced manifest to the existing short-training entry point,
 keeping the original checkpoint, 32 steps and learning rate 0.000003.
+
+## Frozen larger pilot (planned before observing new rollout results)
+
+The next bounded run uses 256 expert-only optimizer steps per arm from the
+original checkpoint, batch 1, learning rate 3e-6 and unchanged numerical recipe.
+Human training expands to the original 90 training episodes, with two anchors
+at 25% and 75% of each valid interval; the existing eight human-development
+samples remain unchanged. The human-only schedule permutes 180 anchors with
+seed 20261112, then cycles to fill 256 slots. The mixed arm keeps every even
+human slot unchanged and replaces 128 odd slots with a fixed shuffled selection
+from eight phase anchors in each of the 19 reviewed generated trajectories.
+This compares equal optimizer/sample budgets, not equal human exposure.
+
+The accepted-19 fixture/history audit passed for all candidates; maximum
+reported sink-cache discrepancy is 3.662 micrometers, below the 50-micrometer
+gate. Each trajectory also has sustained dual-finger lifting evidence.
+These checks support data usability, not expert optimality.
+
+Fixed train-probe and human-development losses are recorded at steps
+0/64/128/192/256 to expose overfitting or original-domain degradation.
+The final step is evaluated regardless of those values; no best-dev selection.
+Six further cross-family development initial states (cross00 through cross05,
+seeds 2001 through 2006) are frozen as a complete set before policy outcomes.
+Evaluate the original model, human-only and mixed final checkpoints on all six;
+do not select only failed cases or touch the elbow final-test family.
+Their difficulty is unknown until baseline evaluation; calling them harder
+before measurement would be unwarranted.
