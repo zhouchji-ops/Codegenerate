@@ -684,3 +684,45 @@ expert demonstrations. Differences include geometry-family coverage, scene
 initialization/layout, trajectory content and sampling weights. Success does
 not isolate one causal3D-generation factor. Keep these confounds with the
 result rather than crediting the latest scene generator automatically.
+
+### Dose512 cross retention and new held-out design
+
+All 18 secondary cross rollouts and all physical/history audits completed.
+Exact paired initial/full-metadata checks passed for every current arm.
+Steps for cross00..05 (seeds 2001..2006):
+- Human512: 217/176/192/199/323/F600, official 5/6, stable 4/6.
+- Old-quarter512: 220/175/199/F600/186/F600, official 4/6, stable 3/6.
+- Natural64_512: 178/178/192/200/317/F600, official 5/6, stable 4/6.
+
+Cross00 is official success with sustained lifting for all three, but residual
+motion/contact with a sink distractor fails the frozen offline stability gate.
+Cross05 has no sustained lift for any arm; quarter512 also fails to lift on
+cross03. Every failure is retained. Across the six natural and six cross
+DEVELOPMENT cases, each arm has 9/12 official successes, with different failure
+sets; the data do not identify one uniformly superior model. Aggregation is
+exploratory and does not replace separate strata or an untouched final test.
+
+After completion of these development checks, all three final-step512 models
+are retained, without selecting a winner. A fresh held-out design is frozen:
+six previously reserved elbow-grip assets, two natural initializations each,
+seeds 6401..6412, twelve paired scenes and thirty-six policy rollouts, horizon
+600. All training sample records exclude elbow assets; no completed elbow
+policy rollout was found. This evaluates new geometry-family plus new initial
+states, not necessarily unseen kitchen layout/style IDs. Training human data
+and the foundation model's pretraining are not claimed to be geometry-disjoint
+from every concept resembling an elbow object.
+
+Natural pretrain resets use the same capture implementation without visibility
+or success screening. Initial safety and two independent canonical restoration
+probes must pass for every scene before any policy is admitted. Unsafe or
+duplicate scenes stop the run; no easy replacement or outcome-based exclusion
+is allowed. All cases share exact frozen scene/state/actual camera inputs
+across arms, with freshly started policy servers using the case seed. One
+noise realization per arm/case is used, not a repeated-seed robustness claim.
+Official success and the unchanged offline stability/lift audit are reported
+separately. The previously evaluated 6201..6206 set remains sealed.
+
+Preregistered design SHA256:
+`9c58fc62ddc947cddefc732c42a2679269a6181b879c71b4a657b8635d69c390`.
+Preparation is running; policy queues are gated on all safety/restoration checks.
+This entry records a design and launch, not a completed final result.
