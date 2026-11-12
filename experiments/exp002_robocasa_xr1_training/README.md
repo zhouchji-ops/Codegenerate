@@ -978,3 +978,56 @@ claims that every rejected result is physically implausible or falls out.
 The combined result/audit seal is
 `dfd7a9281c27464bbf49f77a4c26c47aa5875bb1f8f7a31bd0fad2639cffd72f`.
 All queues have finished. No new GPU confirmation run has been launched.
+
+### Fresh geometry / observation factorial pilot: frozen before policy runs
+
+The next pilot crosses fixed human_cov512 versus natural11_cov512 checkpoints
+with none versus the unchanged rgb80 observation prefix. Six cases produce 24
+paired rollouts, all with total horizon 600 and fresh case-seeded servers. Each
+case stays on the same GPU across all four cells. Common query-index noise is
+used; a prefix shifts query time, not the noise index. No weights, RGB thresholds,
+action schedule, cases or success rules may be changed after results are seen.
+
+| Construction-lineage cluster | Seeds | Explicit layouts | Style |
+|---|---|---|---|
+| open_fork | 6601, 6602 | 12, 14 | 12 |
+| stepped_solid | 6603, 6604 | 15, 16 | 12 |
+| double_end | 6605, 6606 | 17, 22 | 12 |
+
+These are three distinct construction lineages, not six independent geometry
+clusters and not a claim of distinct mathematical topology. Scaling or mirroring
+would stay within a cluster. Geometry source is direct handwritten compound
+primitives, not Kimi. All components are face-connected with no positive-volume
+intersections. Nominal mass is 40 g; compiled masses are approximately
+40.0001, 39.99997 and 40 g
+(the double-end compiled mass is exactly 0.04 kg). Inertias are positive.
+All six initial scenes pass exact-counter support, finite state, no initial
+success, target penetration and robot-obstacle checks. Admission does not depend
+on policy success or visibility. No seed replacement is permitted; any failed
+admission blocks the whole pilot. Double independent canonical restore probes
+must pass before the gated launcher can start inference.
+
+The chosen layout IDs are absent from the recorded natural36, cross-development
+and sealed-elbow snapshot metadata. They are not claimed unseen by upstream
+pretraining or all human data. Source metadata and actual initial observations
+will be verified in every cell; prior sealed final outcomes are not used to pick
+these cases. Official success remains primary, with direct-sink-support,
+horizontal-containment and settling audited separately. Report each paired case,
+all regressions, prefix/total action and inference costs; three clusters cannot
+support a broad statistical claim.
+
+This tests complete training recipes, not geometry in isolation: human uses
+256 human slots while natural11 uses 192 human plus 64 generated-policy slots,
+both for 512 updates. Source, scene coverage and sampling change together.
+An equal-count newly collected original-geometry policy-data control is not yet
+available under the same collection and action-window protocol. Historical human
+or old-quarter data do not constitute that matched control. Natural22's adverse
+results and the development-based selection of natural11 remain disclosed.
+
+Frozen preregistration SHA256:
+`2ad911a3d4ef773ef14b006d4974b996f678162a5ef3840b10a178ed8e56a7f9`.
+Deployment code seal SHA256:
+`d7531fa14fbc7e5089a57d55a7decb44a1caf3df5f70e9bd0b3ed5f1c15cd1ac`.
+Source: scripts/generate_confirmation_primitives.py; four new static tests.
+The gated launcher is waiting for remaining restore probes at this entry; no
+policy result is claimed. Only code and documentation are stored in this repo.
