@@ -176,7 +176,7 @@ This is prefix reweighting, not visibility isolated from pose or action phase.
 Record unique anchors and any repeated weighting explicitly. No v3 observation
 training has been launched or claimed successful.
 
-## Separately authorized two-group exploratory pilot (now running)
+## Separately authorized two-group exploratory pilot (completed)
 
 The original three-group plan remains unmet; it has not been relabeled as
 successful. A later explicit decision permits a **separate two-group pilot**
@@ -219,7 +219,7 @@ its outcome is not used to revise the frozen data, learning rate or checkpoint
 selection. Observation-specific optimization began only after this separate
 authorization and four-trajectory qualification.
 
-### Two-group training completed; rollout assessment pending
+### Two-group training and rollout assessment completed
 
 Both arms completed all 256 optimizer steps, saved final expert and optimizer
 states, and passed fresh-process reload of all 407 expert keys. Reloaded
@@ -233,7 +233,7 @@ the five monitors at 0/64/128/192/256.
   0.1199503001, 206.53 s including monitoring.
 - Both peaked at 21.05 GiB; both began at dev 0.3553604763 and probe 0.1363142561.
 
-These losses do not measure observation acquisition. The final models are now
+These losses do not measure observation acquisition. The final models were
 frozen for the independently reserved natural-hidden bridge05/5106 case and
 the six reused cross development cases: seven per arm, fourteen new rollouts.
 The original 5106 baseline ran once for 600 steps and failed; its outcome did
@@ -241,3 +241,44 @@ not alter either arm's data, hyperparameters or final-checkpoint choice.
 Keep initial-state/image pairing, actual query logs and visibility timing in
 the evaluation. Do not infer generalization from two training groups or turn
 this exploratory result into a claim that the original three-group design ran.
+
+### Frozen fourteen-rollout result
+
+All fourteen planned rollouts completed, with no result-based removal:
+- Independently reserved natural-hidden bridge05/5106: both arms failed at
+  600 steps, as did the original-model baseline. Independent trajectory-history
+  review found zero target-contact frames and no lift for either trained arm.
+  The baseline's late single-finger contact is not evidence of a trained gain.
+- Reused cross development cases: both arms succeeded on five of six.
+  Visible-start steps, cross00 through cross05: 229/180/212/198/333/F600.
+  Hidden-start: 238/178/212/198/196/F600.
+- On the same five successful cases, mean steps were 230.4 versus 204.4.
+  This is a descriptive local efficiency difference, largely cross04, not a
+  success-rate gain, independent replication, or evidence of active-observation
+  generalization. Cross05 failed in both arms.
+
+The external evaluation artifact is
+`observation2_model_evaluation_v1/all14_integrity_paired_verification.json`.
+All fourteen pass trajectory integrity and exact reference comparisons for
+model XML, initial full simulator state, state14, and all three initial RGB
+images. Direct policy-query logs also pass the schedule check. This verifier
+does not itself perform the physical review.
+
+A historical provenance limit remains: the complete episode-metadata file
+hashes were not frozen before these runs. Matching recorded target fields for
+the seven cases is not a substitute for proving byte-identical full metadata.
+Future evaluation uses the strengthened metadata-hash gate; this cannot
+retroactively certify the older runs.
+
+Offline segmentation of the actual logged policy inputs on case5106 checks
+38 queries x four history frames x three cameras per arm. Both trained arms
+have zero target pixels after the model crop throughout; first-positive and
+>=20-pixel query times are absent. The original baseline reached >=20 pixels
+at query384. Thus these trained failures concern not bringing the target into
+the policy input, not a demonstrated failure after visual acquisition. The
+segmentation audit is diagnostic only and was never supplied to the model.
+
+The two-group pilot does not establish the intended observation benefit.
+The original three-group plan remains unmet. Any expansion must be a separately
+frozen experiment with more independent safe training groups and disjoint
+development/final-evaluation groups, not additional tuning on case5106.
