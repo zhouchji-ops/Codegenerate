@@ -726,3 +726,15 @@ Preregistered design SHA256:
 `9c58fc62ddc947cddefc732c42a2679269a6181b879c71b4a657b8635d69c390`.
 Preparation is running; policy queues are gated on all safety/restoration checks.
 This entry records a design and launch, not a completed final result.
+
+Preparation audit correction, before any policy execution: the initial
+independent support classifier used the substring counter and incorrectly
+rejected two scenes whose assigned Counter-class fixture is named island.
+The corrected audit resolves the exact target placement fixture and verifies
+its Counter class in frozen episode metadata, then matches support contacts
+to that fixture. All twelve pass with unchanged contact, penetration, finite
+state and robot-overlap thresholds. Original v1 audit failures are preserved;
+no scene/state or object was regenerated, moved, dropped or replaced. The
+second audit and the correction record are separate artifacts.
+Final frozen scene/protocol hash before policy rollout:
+`b0e21afebc2e5345b0708eb21e4c9da4f02dfaa584c80071ecfe526d7bdffb29`.
