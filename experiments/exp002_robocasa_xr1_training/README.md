@@ -421,3 +421,43 @@ were finite. Human dev means at 0/64/128/192/256 were
 The prescribed final step remains selected, not the lower-loss step 192.
 Six new fixed-development rollouts are handed off; no further optimizer run
 is implied by this check.
+
+### Full-stage rollout outcome
+
+The six frozen rollouts subsequently completed: five successes at
+214/176/213/384/415 steps, and cross05 failure at600. Initial XML, simulator
+state, state14 and three RGB views matched the reference exactly. The common
+five-success mean was280.4 steps, versus204.6 for new-uniform and203.2 for the
+older quarter-replay arm. Recovering phase-arm cross00 did not establish an
+overall benefit. These are reused development scenes, not untouched tests.
+
+### Frozen natural-scene refresh pilot (preparation pending)
+
+A separate bounded data-refresh experiment uses five newly audited, naturally
+initialized T-shape scene_groups: seeds6001/6002/6004/6005/6006. The candidate
+manifest SHA-256 is
+`5d9bfd8c112a1beee1050bfbd7bafa0accaaa7b3880cae404f36c992aba07f05`.
+Seed6003 failed; naturally hidden bridge6024 reported official success but
+remains needs_review under the conservative physical gate. Both are excluded.
+Thus this is NOT all-hidden observation augmentation or an expert dataset.
+
+Before preparing or training, the initial proposal to replace all64 generated
+slots was superseded by the following retention-preserving schedule:
+- Reuse the completed quarter256 final model as the control, without retraining.
+- Train one new arm from the original checkpoint for256 optimizer steps with
+  the same lr3e-6, optimizer, seed/noise schedule and final-step selection.
+- Preserve192 human and48 older generated rows byte-for-byte at manifest level.
+- Replace only16 rows at zero-based indices i%16==15 with new natural examples.
+- Five unique groups receive4/3/3/3/3 anchors, uniformly spread over each full
+  episode's valid range6..N-16, keeping complete future16 targets and three
+  camera histories. No early-observation-only weighting or visibility oracle.
+- Verify all source/review/safety/metadata hashes and admission gates before
+  extraction. Leave the existing eight human-development rows unchanged.
+- Evaluate the control and new arm on all six newly fixed development cases
+  6101..6106, with the independently running original-model baseline reused.
+  Do not rerun oldcross/5106 for selection; final6201..6206 remain sealed.
+
+This contrasts two data mixtures with equal optimizer budgets, not a single
+causal visibility variable: scene identity, demonstrations and sampled action
+phases differ. Only five new T groups are represented. No new optimizer run
+or rollout outcome is claimed at this preparation stage.
