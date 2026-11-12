@@ -57,12 +57,12 @@ def main():
     for r in samples:
         path=Path(r['path']);r['path']=str(path if path.is_absolute() else hp.parent/path);r['source']='human_dataset'
     train=[r for r in samples if r['split']=='train'];dev=[r for r in samples if r['split']=='dev']
-    assert len(dev)==8
+    assert len(dev)==8 and len({r['episode_index'] for r in dev})==8
     assert {r['episode_index'] for r in train}.isdisjoint({r['episode_index'] for r in dev})
     baseline,mixed=schedules(train,geometry,a.steps,a.seed)
     protocol=dict(steps=a.steps,seed=a.seed,geometry_candidates=len(geometry),
         human_unique_anchors=len(train),human_episodes=len({r['episode_index'] for r in train}),
-        dev_episodes=len(dev),source_manifest_sha256=digest(a.review_manifest),
+        dev_episodes=len({r['episode_index'] for r in dev}),source_manifest_sha256=digest(a.review_manifest),
         fixture_summary_sha256=digest(a.fixture_summary),human_manifest_sha256=digest(hp),
         hyperparameters='original checkpoint, expert only, batch1, lr3e-6, repeat1, no async prefix',
         evaluation='final step only; fixed 6 cross development initial states; elbow test untouched')
