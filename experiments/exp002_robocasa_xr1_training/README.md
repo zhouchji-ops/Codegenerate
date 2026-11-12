@@ -1132,3 +1132,42 @@ as fresh confirmation. Phase-balanced matching is a new recipe, not the earlier
 uniform natural11 recipe. All earlier adverse results remain part of the record.
 Frozen matched-data/training protocol SHA256:
 `8ff0e0a3b771137f8f2543ed3587afd9df1ef6b24e54d3481ff697e91663276f`.
+
+### Matched SFT completion and fully crossed confirmation preparation
+
+Both matched arms completed all512 updates, monitors0/128/256/384/512 and
+independent407-key reload. Reloaded dev and shared train-probe loss vectors match
+exactly within each arm. Native training took390.19s, generated training382.65s,
+both peak21.05GiB. Dev means0.34421549 and0.33831249 are diagnostics only;
+neither checkpoint was selected over the other by this loss.
+
+The next frozen pilot uses two NEW construction lineages (planar_ring and
+staggered_z), each crossed with the SAME layouts27/32/33 and two placement-depth
+strata: task placement coordinate -1(front) and0(inset). Twelve states, seeds
+6801-6812, style12, all receive native_matched6, geometry_matched6 and the earlier
+human_cov512 reference. Horizon600, NO RGB prefix, same case-noise seed and same
+GPU within each paired case. Human reference used initialization20261113 rather
+than20261114, so is context rather than a perfectly matched initialization control.
+Depth labels are predefined sampling rules, not a guarantee of actual difficulty.
+Actual cropped target pixels in all cameras and target-to-distractor surface
+clearance will be measured before policy execution, recorded without filtering.
+Clearance is not a grasp-reachability certificate. Initial safety and double
+canonical restoration are mandatory; a failed gate blocks rather than replaces
+cases. All twelve initial safety checks have passed; restoration/measurement
+and gated launch are underway. No policy result is claimed in this entry.
+
+Report official/extra-strict outcomes, per-case paired only-geometry and only-native
+successes, all regressions, action costs and both strata. Two geometry lineages
+and twelve states remain a small pilot, not broad significance evidence. The
+previously read six-case pilot is sealed and not reused here.
+Crossed design SHA256:
+`83f4257825dd3efd16acf259a2a8c731ddce4e24d6938e1b4cbb4a6134aa5e56`.
+Use `generate_confirmation_primitives.py --family-set crossed` for geometry.
+
+A separate fresh-native-domain retention precheck is also frozen for seeds6901
+and6902, native task sampling, noRGB and600-step budget. Neither is a training
+candidate. Intended arms are the same three fixed checkpoints; inference must
+not overlap occupied GPUs and must pass the same admission/restoration gates.
+Only prechecking has started, not retention-policy evaluation. Two cases cannot
+establish broad retention; all outcomes must remain. Retention design SHA256:
+`18069f3407039307822b78d7c7376b181e2307892fdc75a1a416fb47b716a46d`.
