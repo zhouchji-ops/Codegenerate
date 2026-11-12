@@ -411,3 +411,13 @@ No accepted scene initially covered the all-three-views-empty condition seen
 in cross05. Keeping the right camera is essential for several training scenes.
 This distribution gap motivates a separate training-only observation-acquisition
 experiment, not more repetition of the same visible-target supervision.
+
+The full-stage retention arm completed its sole 256-step run and saved final
+expert/optimizer states. Fresh-process reload of all 407 expert keys reproduced
+the development and training-probe arrays exactly; all step losses/gradients
+were finite. Human dev means at 0/64/128/192/256 were
+0.355360/0.347093/0.348587/0.344066/0.352623. Final shared-human-probe mean was
+0.121925. Training plus monitoring took 208.13 s with 21.05 GiB peak allocation.
+The prescribed final step remains selected, not the lower-loss step 192.
+Six new fixed-development rollouts are handed off; no further optimizer run
+is implied by this check.
