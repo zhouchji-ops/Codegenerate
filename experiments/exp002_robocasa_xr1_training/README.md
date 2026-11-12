@@ -103,3 +103,45 @@ python -B scripts/restore_rollout_snapshot.py --snapshot "$BASELINE_ROLLOUT" --c
 
 采集脚本和适配器来自同仓库 exp001 工作分支；依赖该分支的文件，不能仅取本PR后声称所有示例独立可运行。
 
+
+## Matched-budget generated-geometry replay pilot
+
+A subsequent frozen pilot replaces the odd sample slots of the original 32-step
+human-only run with 16 reviewed generated-geometry policy rollouts; even slots
+retain exactly the same 16 human samples. The original 32-step checkpoint is the
+human-only control. Both start from the original released checkpoint and use the
+same optimizer settings, step seeds and official image preprocessing. This is a
+matched optimization-budget comparison, not matched human-data exposure.
+
+The new preparation entry point is `scripts/prepare_xr1_mixed_pilot.py`.
+It verifies every accepted trajectory and review SHA-256, rejects reserved
+splits, selects 16 trajectories uniformly from the ordered 19-entry v2 manifest,
+and excludes anchors with incomplete 16-action futures. State/RGB are pre-action;
+the four history indices are t-6, t-4, t-2, t. Generated state14 is already
+EE-first axis-angle and takes the explicit identity adapter plus zero-padding
+to 60. Human state16 retains its dataset quaternion/reordering adapter. Both
+paths check exact shape, finite values, independent state values and zero padding.
+Generated trajectories are **policy pseudo-demonstrations, not human experts**.
+The v2 offline stability audit freezes other joints and does not certify live
+continued-control stability. Only training boxes/T/bridge enter optimization;
+cross is development and elbow remains untouched test.
+
+Measured mixed run: 32 actual optimizer steps (16 human, 16 generated), 22.88 s
+for optimizer steps, 25.50 s including final development loss, peak 19.08 GiB.
+Weights and optimizer state were saved outside the repository. The eight original
+human development losses before training are element-for-element equal between
+control and mixed runs (mean 0.3553604763). Final means are 0.3516939562 for
+human-only and 0.3555818964 for mixed. This small pilot therefore does **not**
+show a human-development-loss benefit from mixing. Loss is not task success.
+Independent fixed-initial-state cross-family rollout comparisons remain pending.
+No test-set selection or hyperparameter adjustment has occurred.
+
+Run the preparation step with explicit external paths:
+```bash
+python scripts/prepare_xr1_mixed_pilot.py \
+  --review-manifest "$REVIEWED_TRAIN_MANIFEST" \
+  --human-manifest "$HUMAN_TRAIN_DEV_MANIFEST" \
+  --output "$EXTERNAL_MIXED_SAMPLES"
+```
+Then supply the produced manifest to the existing short-training entry point,
+keeping the original checkpoint, 32 steps and learning rate 0.000003.
