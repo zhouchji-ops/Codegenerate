@@ -477,3 +477,66 @@ and final expert/optimizer states were saved. A separate process reloaded all
 These are demonstration-loss diagnostics, not success-rate results. The final
 checkpoint remains fixed. New-six-development evaluation is now running for
 the oldquarter control and newnatural arm; original-model baseline is reused.
+
+### Natural-six development result and frozen final evaluation (2026-11-12)
+
+All six natural development scenes6101..6106 completed. Steps in seed order:
+- Original:223/208/213/245/F600/304,5/6.
+- Human-only256:224/227/203/253/F600/288,5/6.
+- Older quarter256:225/229/211/246/F600/F600,4/6.
+- Natural16 refresh256:222/227/212/246/359/344,6/6.
+
+The18 original/quarter/natural trajectories and6 human trajectories passed
+exact initial XML, full simulator state, state14, three RGB, canonical,
+actual query-log and frozen full-episode-metadata checks. On6105 the natural
+arm showed sustained dual-finger lift at305; original and quarter showed none.
+Natural6106 lifted at156. Both natural successes were horizontally inside the
+sink and stable for a1-second offline passive check, without robot support.
+Their existing conservative label remains stable_but_bbox_region_mismatch,
+not strict-bbox pass. This initial local gain is one paired development case
+beyond the human-only baseline, not a statistically established broad gain.
+
+Before any final policy evaluation, freeze the three final checkpoints:
+original XR1, human256 final and natural16_256 final. Evaluate every one of
+six previously reserved scene snapshots6201..6206, horizon600, matching noise
+seeds, actual model observations/actions and unchanged official success.
+Run independent canonical/state/dynamics probes before rollouts and retain
+all18 outcomes. No training, checkpoint selection, data-mixture change or
+success-threshold change may use these final outcomes. Physics audit is a
+separate report, not a replacement for official success. This is same-task
+scene generalization; generated shape categories overlap training.
+
+Selection history: multiple human/mixed/quarter/phase/full-stage pilots used
+repeated cross development scenes; the two-group observation pilot did not
+establish a gain. The final natural16 candidate was chosen after the newly
+frozen six-scene development comparison and subsequent human-only check.
+It is not the only candidate tried, and these development results are not an
+independent test. Final results remain pending at this protocol freeze.
+
+### Frozen final-six outcome and continuation
+
+All18 final rollouts and exact paired-integrity checks completed. In6201..6206
+order, original:220/330/170/F600/177/150 (5/6); human256:
+221/429/179/F600/185/173 (5/6); natural16:
+222/F600/170/F600/194/169 (4/6). The natural arm adds no final success and
+regresses on6202; the development improvement did not reproduce. Keep all
+these results. Do not describe generated-geometry effectiveness from this run:
+scene identity, demonstration content and sampling changed together.
+
+All18 physical and history reviews completed. Every official success had
+sustained dual-finger lift and stable released sink support, with horizontal
+containment. Their conservative label is stable_but_bbox_region_mismatch,
+not strict full-bbox containment. All failures also had some sustained lift;
+natural6202 ended outside the basin near floor height. This distinguishes
+transport/placement failure from failure to perceive or initially grasp.
+The external result collection natural_final_three_arm_v1 contains the18-case
+paired verification, physical/history summary and locked_result_manifest.
+This final set is now sealed for reporting, not subsequent recipe selection.
+
+Continuation is data coverage on the next six previously preregistered TRAIN
+scenes6007..6012 (bridge00..05), in fixed seed order, original XR1 teacher,
+600-step horizon. Initial support/finite/no-penetration checks pass; independent
+restore probes precede rollouts. Automatic physical/history review follows.
+These are policy pseudo-demonstrations, not experts. All failures are retained;
+no new SFT is authorized by a success flag alone. This extends training coverage
+without sampling, tuning against, or training on the sealed final set.
