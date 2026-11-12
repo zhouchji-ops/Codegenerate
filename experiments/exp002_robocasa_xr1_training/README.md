@@ -309,3 +309,14 @@ noise seeds and final-step rule. Comparing them isolates phase selection on the
 same new scenes; comparing either with old quarter replay also changes scene
 distribution and cannot isolate the phase mechanism. Each new final checkpoint
 will use the existing six-case development protocol, without final-test access.
+
+The new-scene admission completed with 9 accepted and 3 excluded trajectories:
+4 T-family and 5 bridge-family training scenes. All nine have metadata-aware
+physics/history, fixture consistency, sustained dual-finger pickup and exact
+initial-state restoration checks; none needed the grasp-start fallback.
+The accepted-manifest SHA-256 is
+`af35ff258882b80d196325a2afec23c71142fef67cb8eae52ff4ce7a552b8e88`.
+Both 256-step arms were launched only after these checks. A separate schedule
+audit confirms identical human slots, identical development samples and
+identical per-episode counts between arms. The preparation entry point now
+also rejects any family other than T/bridge, even if a manifest is mislabeled.
