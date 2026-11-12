@@ -738,3 +738,49 @@ no scene/state or object was regenerated, moved, dropped or replaced. The
 second audit and the correction record are separate artifacts.
 Final frozen scene/protocol hash before policy rollout:
 `b0e21afebc2e5345b0708eb21e4c9da4f02dfaa584c80071ecfe526d7bdffb29`.
+
+### Completed elbow held-out pilot: all 36 outcomes retained
+
+All 12 initial safety checks and 24 independent restoration probes passed
+before policy evaluation. All 36 policy rollouts, exact paired full-metadata
+checks, and physical/history audits have completed. Steps for seeds 6401..6412:
+- Human512: F600/214/241/220/267/192/191/219/183/174/185/F600.
+- Old-quarter512: F600/207/196/251/F600/188/171/167/265/167/169/296.
+- Natural64_512: 256/211/213/220/226/188/192/186/173/165/246/F600.
+
+Official successes are 10/12, 10/12 and 11/12, respectively. Natural64 gains
+6401 over human512, with both failing 6412; against quarter512 it gains 6401
+and 6405 but loses 6412. This is a one-case net improvement in a small pilot,
+not a robust or statistically established generalization gain. The twelve
+scenes cover six objects with two initializations each, not twelve independent
+objects. No model or hyperparameter was selected using these outcomes.
+
+The unchanged extra direct-sink-support/full-containment/stability gate gives
+5/12, 6/12 and 6/12. Do not call all gate disagreements physically unstable:
+many official successes rest stably on a distractor inside the sink, which
+fails the additional direct-sink-contact requirement. Full horizontal bounding
+box containment fails in other cases, including 6403 for all arms and 6408
+for human/natural. Quarter6409 moves about 4.19cm in the offline target-only
+settling probe. Original official success is not overwritten by this audit.
+Sustained dual-finger lifting is observed in 11/12, 12/12 and 12/12. Human6412
+fails to lift; natural6412 lifts but does not complete the official task.
+
+Complete result/audit seal:
+`212272a182c9aac520f85569d2d5fa239234150e38fdb4cdd511e006d877cb6a`.
+These final cases are now retained as a completed, sealed evaluation; future
+recipe selection returns to training/development data rather than tuning them.
+
+### Training coverage continuation, not held-out failure targeting
+
+The next bounded collection uses the already frozen, previously uncollected
+TRAIN seeds 6013..6023: six T-grip and five bridge initializations. It does not
+use elbow/final cases or modify geometry to address a particular final failure.
+The original XR1 teacher, horizon600, actual query tracing and double restoration
+checks are retained. All eleven independent initial safety checks passed;
+GPU queues wait for prior work to exit and now perform probes before collection.
+Only official-success trajectories passing existing physical/lift/integrity
+admission can become policy pseudo-demonstrations. All failures remain recorded.
+No new SFT training is claimed in this entry. The prior6024 reviewed rejection
+is not silently replaced or included.
+Collection protocol SHA256:
+`d43199d3a83a7acfe80e6732729fc76689f07b3642b917ede7c26f68573b9288`.
