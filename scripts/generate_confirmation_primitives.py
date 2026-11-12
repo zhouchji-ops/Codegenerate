@@ -16,6 +16,12 @@ PARTS = {
 }
 
 
+CROSSED_PARTS = {
+    'planar_ring': [((.060,.012,.016),(0,-.019,.008)), ((.060,.012,.016),(0,.019,.008)), ((.012,.026,.016),(-.024,0,.008)), ((.012,.026,.016),(.024,0,.008))],
+    'staggered_z': [((.036,.012,.018),(0,0,.009)), ((.012,.034,.018),(-.024,.008,.009)), ((.012,.034,.018),(.024,-.008,.009))],
+}
+
+
 def validate(parts):
     edges = []
     for i, (size, pos) in enumerate(parts):
@@ -36,9 +42,10 @@ def validate(parts):
         raise ValueError('disconnected components')
 
 
-def generate(output):
+def generate(output, parts_by_family=None):
     # Reuse the same XML serializer as the earlier asset families, retaining
     # mass, friction, color, collision/visual separation and registration bbox.
+    parts_by_family = PARTS if parts_by_family is None else parts_by_family
     from generate_grip_families import build
     import generate_grip_families as serializer
     output = Path(output).resolve()
@@ -49,8 +56,8 @@ def generate(output):
     records = []
     original = serializer.components
     try:
-        serializer.components = lambda family, width, thickness: PARTS[family]
-        for family, parts in PARTS.items():
+        serializer.components = lambda family, width, thickness: parts_by_family[family]
+        for family, parts in parts_by_family.items():
             validate(parts)
             xml, size, count = build(family, 0, 0)
             folder = output / family
@@ -68,4 +75,6 @@ def generate(output):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, required=True)
-    generate(parser.parse_args().output)
+    parser.add_argument('--family-set', choices=('initial', 'crossed'), default='initial')
+    args = parser.parse_args()
+    generate(args.output, PARTS if args.family_set == 'initial' else CROSSED_PARTS)
