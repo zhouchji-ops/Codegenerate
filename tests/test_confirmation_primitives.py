@@ -14,6 +14,11 @@ class ConfirmationPrimitiveTest(unittest.TestCase):
         for parts in module.PARTS.values():
             module.validate(parts)
 
+    def test_crossed_lineages(self):
+        self.assertEqual(set(module.CROSSED_PARTS), {'planar_ring', 'staggered_z'})
+        for parts in module.CROSSED_PARTS.values():
+            module.validate(parts)
+
     def test_reject_overlap(self):
         with self.assertRaises(ValueError):
             module.validate([((1, 1, 1), (0, 0, 0)), ((1, 1, 1), (.1, 0, 0))])
