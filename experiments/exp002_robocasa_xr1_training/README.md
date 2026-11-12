@@ -276,3 +276,36 @@ human-only. The monitor is non-monotonic on eight examples, not sufficient to
 establish a general overfitting law. Elapsed training including interval/final
 monitoring was 208.14 s, peak 21.05 GiB. The new-model six-case rollout is pending;
 existing control rollouts will be reused.
+
+### Quarter-replay rollout result and new-scene phase ablation
+
+Quarter replay also achieved 5/6 official successes on the same frozen cases,
+with steps 221/178/217/203/197/600. All six initial-state/image/XML pair checks
+passed. Success rate is unchanged from human-only and 50% mixed. On the same
+five successful cases its mean step count was 203.2, compared with 263.8 for
+human-only and 293.4 for 50% mixed. These are descriptive development outcomes
+from a single noise realization per case, not a robust efficiency claim.
+Cross05 still failed. Existing controls were reused rather than rerun.
+
+The next bounded ablation uses only new, independently accepted training scenes.
+Two new arms retain the exact same 192 human slots from quarter replay and
+replace only the 64 generated slots:
+
+1. New-scene uniform: evenly spaced valid phases within each accepted trajectory.
+2. New-scene phase: 32 approach anchors and 32 grasp/lift anchors, using the
+   same trajectories and the same per-trajectory sample counts as uniform.
+
+Approach anchors range from frame 6 to the metadata-derived grasp-phase start.
+Grasp/lift anchors range from grasp-start minus 8 to first sustained lift plus
+16, clipped so every anchor has four history frames and a complete future
+16-action target. The grasp start is the recent sustained contact segment
+leading to the first sustained lift; explicit fallback labels are retained.
+Physics, fixture, sustained-lift history, source hashes and train/development
+separation must pass before data enters either arm. Needs-review and pending
+episodes are excluded even when official success is true.
+
+Both arms use 256 updates from the original checkpoint, unchanged optimizer,
+noise seeds and final-step rule. Comparing them isolates phase selection on the
+same new scenes; comparing either with old quarter replay also changes scene
+distribution and cannot isolate the phase mechanism. Each new final checkpoint
+will use the existing six-case development protocol, without final-test access.
