@@ -4,6 +4,7 @@ All dimensions are metres. Primitive rigid boxes are engineering controls,
 not a strong procedural baseline or evidence of useful robot demonstrations.
 """
 import argparse
+import copy
 import hashlib
 import json
 import math
@@ -60,11 +61,13 @@ def smoke(output):
         path = root / record['path']
         if hashlib.sha256(path.read_bytes()).hexdigest() != record['xml_sha256']:
             raise ValueError('asset checksum mismatch')
-        obj = MJCFObject(name=record['id'], mjcf_path=str(path))
-        xml = ET.fromstring(path.read_text())
-        world = xml.find('worldbody')
-        inner = world.find('body/body')
-        world.remove(world.find('body'))
+        obj = MJCFObject(name=record['id'], mjcf_path=str(path), density=300)
+        xml = ET.Element('mujoco', model='loaded_asset_smoke')
+        xml.append(copy.deepcopy(obj.asset))
+        world = ET.SubElement(xml, 'worldbody')
+        inner = copy.deepcopy(obj.get_obj())
+        for joint in list(inner.findall('joint')) + list(inner.findall('freejoint')):
+            inner.remove(joint)
         world.append(inner)
         inner.set('pos', '0 0 0.2')
         ET.SubElement(inner, 'freejoint')
@@ -93,3 +96,4 @@ if __name__ == '__main__':
         smoke(args.output)
     else:
         generate(args.output, Path(__file__).resolve().parents[1])
+
