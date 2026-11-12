@@ -149,3 +149,28 @@ For provenance, the old bridge00 query schedule was reconstructed from the
 frozen collector's every-16-step rule and stored history; it was not a separately
 recorded inference-call log. New collections record actual policy_query_steps
 directly without changing the policy, preprocessing, or action budget.
+
+### Bounded v3 feasibility branch: natural initial states
+
+Because v2 did not provide the required coverage, a separately authorized v3
+screens official natural initializations rather than further editing yaw.
+Predeclared training seeds are 5001–5012; validation seeds are 5101–5106, using
+only T/bridge assets. Keep all 18 screening outcomes. Select in the registered
+seed order at most the first three safe, model-crop-zero training groups and
+the first such independent validation group. Selection uses safety/visibility,
+not policy success. If the finite list is insufficient, stop and report it;
+do not silently append seeds. Screening alone is not a qualified demonstration.
+
+Only selected candidates proceed to bounded teacher rollouts and full
+metadata-aware admission. Report first-positive query, first >=20-pixel query
+and first target-contact time. A useful observation-acquisition demonstration
+should reveal the target before touching it; a blind manipulation that merely
+moves the target into view must not be mislabeled as observation acquisition.
+
+The visible-yaw paired control above may not exist for natural-hidden cases.
+A proposed alternative, to be frozen before optimization if data qualify, is
+same-episode observation-prefix samples versus post-discovery samples, with
+identical scene_group weights, 16 new slots and the same 240 retained slots.
+This is prefix reweighting, not visibility isolated from pose or action phase.
+Record unique anchors and any repeated weighting explicitly. No v3 observation
+training has been launched or claimed successful.
