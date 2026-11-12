@@ -17,6 +17,25 @@ def anchors(length,contact,lift,count,phase,approach_count=None):
     if not 0<n<count:raise ValueError('Each phase must receive anchors')
     return quantiles(6,contact,n)+quantiles(max(6,contact-8),min(hi,lift+16),count-n)
 
+def balanced_anchors(length,contact,lift,count,offset,carry_indices):
+    hi=length-16
+    if not (6<=hi and 0<=contact<=lift<length):
+        raise ValueError('Invalid stage bounds')
+    quotas=[sum((offset+j)%4==stage for j in range(count)) for stage in range(4)]
+    intervals=[(6,contact),(contact-8,lift+8),None,(max(lift,length-48),hi)]
+    selected=[];labels=[]
+    for stage,n in enumerate(quotas):
+        if not n:continue
+        if stage==2:
+            pool=sorted(set(t for t in carry_indices if max(6,lift)<=t<=hi))
+            if len(pool)<n:raise ValueError('Insufficient verified held-transport anchors')
+            values=[pool[min(len(pool)-1,int((i+.5)*len(pool)/n))] for i in range(n)]
+        else:
+            lo,up=intervals[stage];lo=int(np.clip(lo,6,hi));up=int(np.clip(up,lo,hi))
+            values=[lo+int((up-lo)*(i+.5)/n) for i in range(n)]
+        selected.extend(values);labels.extend([('approach','grasp_lift','verified_held_transport','terminal_tail')[stage]]*n)
+    return selected,labels
+
 def require_training_family(family):
     if family not in ('t_grip','bridge'):
         raise ValueError('Only frozen T/bridge training families are allowed')
@@ -36,6 +55,7 @@ def validate_quarter_slots(train):
 def main():
     p=argparse.ArgumentParser()
     for key in ('accepted-manifest','quarter-manifest','output'):p.add_argument('--'+key,type=Path,required=True)
+    p.add_argument('--arms',nargs='+',choices=('uniform','phase','balanced'),default=('uniform','phase'))
     a=p.parse_args();out=a.output.resolve();root=Path(__file__).resolve().parents[1]
     if out==root or root in out.parents:raise ValueError('External outputs required')
     reviewed=json.loads(a.accepted_manifest.read_text());rows=reviewed['accepted']
@@ -67,8 +87,9 @@ def main():
     report={'accepted_manifest_sha256':digest(a.accepted_manifest),
             'quarter_manifest_sha256':digest(a.quarter_manifest),'steps':256,'human_slots':192,
             'generated_slots':64,'scene_count':len(rows),'budget':'identical original checkpoint/lr/noise/final-step rule',
+            'balanced_rule':'16 approach /16 grasp-lift /16 verified pickup-candidate holding /16 terminal tail, identical scene counts',
             'phase_rule':'32 approach anchors frame6 to metadata grasp-phase start; 32 contact/lift anchors grasp-start-8 to sustained-lift+16; complete future16; explicit fallback labels retained'}
-    for arm in ('uniform','phase'):
+    for arm in a.arms:
         schedule=copy.deepcopy(train);slot=0;selection=[];odd_seen=0
         folder=out/arm;folder.mkdir()
         for i,r in enumerate(rows):
@@ -77,6 +98,12 @@ def main():
             if count%2:
                 n_approach+=int(odd_seen%2==0);odd_seen+=1
             chosen=anchors(r['steps'],r['grasp_phase_start_step'],r['first_sustained_lift_step'],count,arm=='phase',n_approach)
+            stage_labels=[arm]*count
+            if arm=='balanced':
+                history=json.loads(Path(r['history_review_path']).read_text())['history']['history']
+                carry=[frame['step'] for frame in history if frame['pickup_candidate']]
+                chosen,stage_labels=balanced_anchors(r['steps'],r['grasp_phase_start_step'],
+                    r['first_sustained_lift_step'],count,slot,carry)
             with h5py.File(r['trajectory_path'],'r') as f:
                 assert len(f['actions'])==r['steps']
                 for j,t in enumerate(chosen):
@@ -91,7 +118,7 @@ def main():
                     path=folder/('sample_%02d_%02d.npz'%(i,j));np.savez(path,**data)
                     path.with_suffix('.json').write_text(json.dumps({**r,'task':str(f.attrs['instruction']),
                         'sample_step':t,'history_indices':ids.tolist(),'action_indices':[t,t+16],
-                        'sample_sha256':digest(path),'arm':arm},indent=2))
+                        'sample_sha256':digest(path),'arm':arm,'sampling_stage':stage_labels[j]},indent=2))
                     row=dict(path=str(path),split='train',episode_index='new_geometry:'+r['run'],
                         sample_step=t,source='policy_rollout_not_expert')
                     schedule[4*slot+3]=row;selection.append(row);slot+=1
