@@ -38,6 +38,7 @@ def main():
     kwargs=dict(pilot_xml=str(a.xml.resolve())) if a.xml else {}
     env=RoboCasaGymEnv(env_name='RigidPilotCounterToSink' if a.xml else 'PickPlaceCounterToSink', split='pretrain',seed=a.seed,**kwargs)
     start=time.monotonic(); success=False; steps=0
+    timings=dict(inference_s=0.0, record_s=0.0, video_s=0.0, simulation_s=0.0)
     try:
         obs,_=env.reset(seed=a.seed)
         instruction=obs['annotation.human.task_description']
@@ -55,21 +56,29 @@ def main():
             def append(name,value):
                 value=np.asarray(value)
                 if name not in datasets:
-                    datasets[name]=h.create_dataset(name,shape=(0,)+value.shape,maxshape=(None,)+value.shape,dtype=value.dtype,compression='gzip',compression_opts=1)
+                    datasets[name]=h.create_dataset(name,shape=(0,)+value.shape,maxshape=(None,)+value.shape,dtype=value.dtype,compression='gzip',compression_opts=1,chunks=(1,)+value.shape if value.ndim==3 else None)
                 d=datasets[name]; d.resize(d.shape[0]+1,axis=0); d[-1]=value
             for step in range(a.horizon):
                 for key in ev.CAMERA_KEYS: histories[key].append(obs[key])
                 states.append(ev.observation_to_state(obs))
                 if not plan:
+                    tick=time.monotonic()
                     chunk=client.infer(ev.sample_history(states,4,2),{k:ev.sample_history(v,4,2) for k,v in histories.items()},instruction)
+                    timings['inference_s']+=time.monotonic()-tick
                     plan.extend(chunk[:16])
                 action=np.asarray(plan.popleft(),dtype=np.float32)
                 if action.shape!=(12,) or not np.isfinite(action).all(): raise ValueError('invalid policy action')
+                tick=time.monotonic()
                 for key in ev.CAMERA_KEYS: append('observations/'+key,obs[key])
                 append('state14',states[-1]); append('actions',action)
                 append('sim_states',env.env.sim.get_state().flatten())
+                timings['record_s']+=time.monotonic()-tick
+                tick=time.monotonic()
                 video.append_data(ev.make_video_frame(obs))
+                timings['video_s']+=time.monotonic()-tick
+                tick=time.monotonic()
                 obs,_,done,truncated,info=env.step(convert_action(action))
+                timings['simulation_s']+=time.monotonic()-tick
                 steps=step+1; success=bool(info.get('success',False))
                 append('success',np.array(success))
                 if success or done or truncated: break
@@ -78,7 +87,7 @@ def main():
             video.append_data(ev.make_video_frame(obs))
         report=dict(source='policy_rollout_not_expert',success=success,steps=steps,seed=a.seed,
                     horizon=a.horizon,xml=str(a.xml) if a.xml else None,elapsed_s=time.monotonic()-start,
-                    instruction=instruction,review_status='pending')
+                    instruction=instruction,review_status='pending',timings=timings)
         (out/'result.json').write_text(json.dumps(report,indent=2)); print(json.dumps(report),flush=True)
     finally:
         env.close(); client.close()
