@@ -17,6 +17,10 @@ def anchors(length,contact,lift,count,phase,approach_count=None):
     if not 0<n<count:raise ValueError('Each phase must receive anchors')
     return quantiles(6,contact,n)+quantiles(max(6,contact-8),min(hi,lift+16),count-n)
 
+def require_training_family(family):
+    if family not in ('t_grip','bridge'):
+        raise ValueError('Only frozen T/bridge training families are allowed')
+
 def main():
     p=argparse.ArgumentParser()
     for key in ('accepted-manifest','quarter-manifest','output'):p.add_argument('--'+key,type=Path,required=True)
@@ -25,11 +29,22 @@ def main():
     reviewed=json.loads(a.accepted_manifest.read_text());rows=reviewed['accepted']
     if not 2<=len(rows)<=32:raise ValueError('Require 2..32 reviewed training scenes')
     for r in rows:
-        assert r['split']=='train_candidate' and r['source']=='policy_rollout_not_expert'
+        require_training_family(r['family'])
+        assert r['split']=='train_candidate'
+        assert r['source'] in ('policy_rollout_not_expert','original XR1 policy pseudodemonstration, not expert')
         for key in ('trajectory','physical_review','history_review'):
             assert digest(r[key+'_path'])==r[key+'_sha256']
         assert 0<=r['first_target_contact_step']<=r['grasp_phase_start_step']<=r['first_sustained_lift_step']<r['steps']
-        assert r['physical_status'] in ('stable','stable_but_bbox_region_mismatch')
+        physical=json.loads(Path(r['physical_review_path']).read_text())
+        history=json.loads(Path(r['history_review_path']).read_text())
+        assert physical['physics']['offline_stability_verified']
+        assert physical['physics']['status'] in ('stable','stable_but_bbox_region_mismatch')
+        assert physical['fixture_consistency']['passed'] and history['fixture_consistency']['passed']
+        assert physical['pair_validation']['initial_state_exact'] and history['pair_validation']['initial_state_exact']
+        assert history['history']['sustained_dual_finger_lift']
+        for key in ('first_target_contact_step','first_sustained_lift_step','grasp_phase_start_step'):
+            assert r[key]==history['labels'][key]
+        assert history['labels']['label_alignment']=='pre-action state indices; not post-action labels' 
     base=json.loads(a.quarter_manifest.read_text())
     train=[r for r in base['samples'] if r['split']=='train']
     dev=[r for r in base['samples'] if r['split']=='dev']
