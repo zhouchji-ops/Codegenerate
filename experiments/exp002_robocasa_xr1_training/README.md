@@ -883,3 +883,40 @@ Frozen protocol SHA256:
 Source: scripts/rgb_observation_prefix.py and scripts/collect_rgb_prefix_rollout.py;
 tests/test_rgb_observation_prefix.py. Queues are running; no completed gain is
 claimed in this entry.
+
+### RGB-only observation prefix: complete development diagnosis
+
+All nine rollouts, exact initial-pair checks, terminal physics and grasp-history
+reviews completed. Steps include prefix actions inside the unchanged 600-step budget.
+
+| Development case | none | fixed20 | rgb80 |
+|---|---:|---:|---:|
+| 6105 | failure 600 | failure 600 | success 381 (43 prefix) |
+| 2004 | success 272 | failure 600 | success 272 (0 prefix) |
+| 2006 | failure 600 | failure 600 | failure 600 (4 prefix) |
+
+Both RGB-arm successes pass extra offline stability and sustained-lift checks.
+Fresh none controls exactly match earlier natural11_cov512 runs in actions,
+simulator states, state14, success flags and terminal simulator states; RGB image
+arrays were not included in this whole-trajectory equality comparison.
+All outcomes are retained under result seal
+`e0459c672651c009e20f62ecceb179f08a7e5edf619e663e15aa3e25f4d40485`.
+
+Offline target-geometry visibility, never supplied to the controller, shows that
+2006's early stop was not simply a blue-background false positive: at step 4 the
+wrist view contained 206 cropped target pixels versus 191 blue-threshold pixels.
+Nevertheless only 33 of 151 unique policy-history frames retained target pixels,
+and the rollout failed without sustained lift. In 6105 the RGB prefix stopped at
+step 43 with 89 cropped target pixels in the right camera. Its 88 queried-history
+frames all retained target pixels. Fixed20 made the target invisible in all 148
+queried-history frames for both 6105 and 2006. These frame counts are not independent
+trials. Appearance improvement alone does not isolate the cause of task success:
+robot pose, action timing and subsequent observation histories also change.
+
+To check retention beyond the three diagnosed cases, a separate 27-rollout extension
+was frozen and started on ALL nine remaining existing development cases, with all
+three arms, identical checkpoint, threshold, scan actions and 600-step budget.
+It is development coverage, NOT a new held-out confirmation. Existing sealed final
+sets are not used. Protocol SHA256:
+`e341f30e540cf56d0d58d9f0b2dd4d11775240ac18978df1980c12edce8bc7a1`.
+No parameter changes were selected from these extension results before launch.
