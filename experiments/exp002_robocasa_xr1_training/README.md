@@ -1031,3 +1031,8 @@ Deployment code seal SHA256:
 Source: scripts/generate_confirmation_primitives.py; four new static tests.
 The gated launcher is waiting for remaining restore probes at this entry; no
 policy result is claimed. Only code and documentation are stored in this repo.
+
+All six initial admissions and twelve canonical restore probes have now passed.
+The gated four-cell queues and paired/physical audits are running. Two episodes
+have produced result files; their outcomes have not been used to alter the frozen
+protocol. Both GPUs have actually loaded inference models; no gain is claimed yet.
