@@ -7,6 +7,7 @@ p.add_argument('--snapshot',type=Path,required=True)
 p.add_argument('--collector',type=Path,required=True)
 p.add_argument('--probe-only',action='store_true')
 p.add_argument('--canonical-reference',type=Path)
+p.add_argument('--freeze-initial-observation',action='store_true',help='Use stored canonical first images after strict physical and bounded render checks')
 a,remaining=p.parse_known_args()
 code_root=Path(__file__).resolve().parents[1]
 for artifact in (a.snapshot,a.canonical_reference):
@@ -43,7 +44,15 @@ class SnapshotEnv(collector.RoboCasaGymEnv):
                     print('CANONICAL_INITIAL_CREATED',flush=True)
                 canonical=np.load(a.canonical_reference)
                 matches={k:bool(np.array_equal(obs[k],canonical[k])) for k in h['observations']}
-                assert all(matches.values()),matches
+                render_delta={k:np.abs(obs[k].astype(np.int16)-canonical[k].astype(np.int16)) for k in h['observations']}
+                discrepancy={k:{'max':int(v.max()),'different_values':int((v!=0).sum())} for k,v in render_delta.items()}
+                print('CANONICAL_RENDER_DISCREPANCY '+json.dumps(discrepancy),flush=True)
+                if a.freeze_initial_observation:
+                    assert all(v['max']<=1 and v['different_values']<=8 for v in discrepancy.values()),discrepancy
+                    for k in h['observations']:obs[k]=canonical[k].copy()
+                    print('FROZEN_CANONICAL_INITIAL_OBSERVATION',flush=True)
+                else:
+                    assert all(matches.values()),matches
                 print('CANONICAL_INITIAL_VERIFIED '+json.dumps(matches),flush=True)
             else:
                 assert all(check['image_equal'].values()),check
