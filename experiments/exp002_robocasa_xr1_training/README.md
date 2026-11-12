@@ -345,3 +345,69 @@ patterns in the base and both new arms, so this run is unaffected. Explicit
 duplicate-run and shifted-slot rejection tests/guards have been added without
 changing the running experiments. Twelve new fixed-development rollouts are
 delegated, reusing old controls rather than retraining or rerunning them.
+
+### New-scene rollout result: phase-only emphasis regressed
+
+All twelve new rollouts passed trajectory integrity and exact initial XML,
+simulation-state, state14 and three-camera checks against the frozen controls.
+
+- New-scene uniform: 5/6, steps 223/184/224/198/194/600.
+- Early-phase emphasis: 4/6, steps 600/175/227/270/186/600.
+
+The phase arm lost cross00; cross05 remained unsolved. Uniform's mean steps on
+the five successful cases was 204.6, close to prior quarter replay's 203.2.
+Thus neither new-scene data nor early-phase emphasis has demonstrated a success
+gain, and the phase arm has a concrete regression.
+
+Cross00 metadata-aware replay shows phase contacted/lifted at 99/104, lost
+finger contact at 134 under a roughly +1 close-gripper command, and landed on
+high sink geometry at 137. It stayed there until roughly 519, regrasped, and was
+still holding at step 600. Uniform maintained grip until intentional -1 opening
+at 205, reached the basin at 207 and succeeded at 223. This points to grasp
+stability during transport, not a demonstrated premature-open command.
+
+Read-only expert audits found 407 valid keys in all three checkpoints.
+Relative update L2 norms versus the original expert were about 0.2293% (human),
+0.2297% (uniform) and 0.2289% (phase); uniform/phase update cosine was 0.7441.
+These magnitudes/directions are not proof for or against catastrophic forgetting.
+On fixed uniform cross00 observations at t0/120/180, three shared noise seeds
+and four model versions gave 36 offline forwards with identical RNG hashes.
+At t120 all predicted gripper values were near closed; phase was not earlier
+to open at t180 either. Fixed uniform observations are not phase's own t134
+state or its original online RNG/chunk sequence, so no counterfactual-success
+claim follows. Evidence supports testing retained transport/pose skills rather
+than asserting global forgetting.
+
+### One bounded full-stage retention check
+
+The next arm keeps the same nine accepted scenes, 192 human slots, 64 generated
+slots, original checkpoint, 256 updates and fixed final-step rule. The 64
+generated anchors allocate exactly 16 each to approach, grasp/lift, holding
+during transport, and the successful episode tail. Transport anchors must be
+actual pre-action history entries marked pickup-candidate, rather than merely
+assuming all post-lift time is held transport. Terminal-tail anchors retain
+complete future actions through the successful ending. This tests whether
+restoring later-stage coverage recovers the lost skill; existing uniform and
+early-phase arms are the controls. No additional steps are added.
+
+Separately, cross05's initial target is outside all three 256x256 views:
+segmentation yields zero target pixels, consistent with RGB inspection and
+projected center x coordinates around 305/273/510. This is not solely occlusion.
+The retention check is not expected to establish a solution to initial
+unobservability. Further work on that failure requires independent training
+scenes with legitimate observation-acquisition actions or controlled visibility,
+not feeding the held-out failure trajectory into imitation training.
+
+The sampling audit of the retention arm independently confirmed exactly 16
+anchors in each of the four categories, identical 192 human slots and per-scene
+counts versus the prior new-uniform arm, and true pickup-candidate evidence
+for all 16 selected holding anchors.
+
+Visibility audits of all nine accepted training initial states found a target
+in at least one external camera; left/right/hand target-pixel counts were
+T00 0/125/0, T02 200/0/0, T03 0/132/0, T05 165/6/0, bridge00 200/0/0,
+bridge01 0/150/0, bridge02 153/0/0, bridge03 0/134/0, bridge04 0/203/0.
+No accepted scene initially covered the all-three-views-empty condition seen
+in cross05. Keeping the right camera is essential for several training scenes.
+This distribution gap motivates a separate training-only observation-acquisition
+experiment, not more repetition of the same visible-target supervision.
