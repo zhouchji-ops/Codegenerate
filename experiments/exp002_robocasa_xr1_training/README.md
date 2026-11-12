@@ -1036,3 +1036,58 @@ All six initial admissions and twelve canonical restore probes have now passed.
 The gated four-cell queues and paired/physical audits are running. Two episodes
 have produced result files; their outcomes have not been used to alter the frozen
 protocol. Both GPUs have actually loaded inference models; no gain is claimed yet.
+
+
+### Completed six-case factorial pilot and native-geometry control feasibility
+
+All 24 paired episodes and physics/history reviews completed with exact initial
+pairing. Official success is 6/6 for EACH of human-none, human-RGB, natural-none,
+and natural-RGB; extra strict physics is 5/6 for each. Neither recipe nor RGB
+produced a success flip in this small, saturated sample; this is not proof that
+augmentation has no benefit. Shape and layout are not fully crossed: each of
+three construction clusters occupies two different layouts. Four-cell paired
+comparisons are valid within each case, but shape/layout effects cannot separate.
+
+| Seed | human-none | human-RGB | natural-none | natural-RGB |
+|---|---:|---:|---:|---:|
+| 6601 | 191 | 411 | 193 | 488 |
+| 6602 | 224 | 224 | 221 | 221 |
+| 6603 | 195 | 195 | 196 | 196 |
+| 6604 | 249 | 249 | 249 | 249 |
+| 6605 | 209 | 209 | 265 | 265 |
+| 6606 | 236 | 236 | 229 | 229 |
+
+Total actions are 1304, 1524, 1353, 1648. RGB activates only on 6601, with
+60 prefix actions in either recipe, increasing total completion time by 220 and
+295 steps respectively. Sustained dual-finger lift passes 6/6, 6/6, 6/6, 5/6:
+natural-RGB 6601 meets official placement without this grasp-history criterion.
+All four 6601 results fail the EXTRA strict rule: human-none and natural-RGB
+rest stably on a sink distractor rather than directly on the sink; natural-none
+and human-RGB have at most 4 and 7 consecutive 0.05-second qualifying samples,
+short of the required 0.5 seconds. Net displacements are tiny, not a fall-out.
+Combined result/audit seal:
+`431cd2b2cd07a53a27afa38569be923a8782b0757db6f29c6cd81a0acb77efe6`.
+The pilot is now sealed and is not a tuning pool.
+
+A native-object training-control feasibility pass is underway, separate from these
+confirmation scenes. Original unfinetuned XR1, no observation prefix, 600 steps,
+identical strict success/lift admission and eventual four-history/16-action-window
+conversion are specified. Candidate training seeds 6001-6012 are fixed in advance;
+only 6001/6002 are the first interface check. Both native scenes (can and reamer)
+pass physical admission and two real canonical/dynamics restoration checks.
+A first restore failed because resolving a symlink changed the registry path
+string. The failed attempt was retained; matching registry paths by resolved
+identity fixed the interface without changing the scene, object or seed.
+Two original-policy collections and subsequent physical audits have now started.
+These are policy pseudo-demonstrations, not expert demonstrations. No matched-dose
+training has yet started; accepted count and all failed candidates must be reported.
+
+The future target is 64 generated/native anchor slots plus the same 192 human
+slots, under the same 512-update budget. Native appearance, language, mass and RNG
+consumption may differ, so even this is not a perfect geometry-only intervention.
+A later confirmation should fully cross shapes and layouts and predefine difficulty
+strata, validated on independent development data rather than selecting final cases
+by policy failures. No existing sealed outcomes will choose those final cases.
+Native-control preregistration SHA256:
+`3ab0c488b847b86663a908e0292bbbe0197af1a9497a73fb18ebb39029d564b5`.
+Native adapter and collector source are included; runtime observations remain external.
