@@ -8,7 +8,7 @@ This is a different question from grasp-phase reweighting in
 [exp002](../exp002_robocasa_xr1_training/README.md).
 
 Current status: the original three-group protocol was not met. A separately
-authorized two-group exploratory comparison is now training; see the final
+authorized two-group exploratory comparison has completed training; see the final
 section for the frozen scope. Do not count pose variants as independent scenes.
 
 ## Why this experiment exists
@@ -218,3 +218,26 @@ generalization evidence. The natural hidden validation baseline has been run;
 its outcome is not used to revise the frozen data, learning rate or checkpoint
 selection. Observation-specific optimization began only after this separate
 authorization and four-trajectory qualification.
+
+### Two-group training completed; rollout assessment pending
+
+Both arms completed all 256 optimizer steps, saved final expert and optimizer
+states, and passed fresh-process reload of all 407 expert keys. Reloaded
+development/probe arrays equal the training-end arrays exactly. All 512 step
+records have contiguous indices and finite loss/gradient norms; both arms have
+the five monitors at 0/64/128/192/256.
+
+- Visible-start control: human dev mean 0.3406036589, shared-human train probe
+  0.1226026742, 208.95 s including monitoring.
+- Hidden-start demonstration arm: human dev mean 0.3437917139, train probe
+  0.1199503001, 206.53 s including monitoring.
+- Both peaked at 21.05 GiB; both began at dev 0.3553604763 and probe 0.1363142561.
+
+These losses do not measure observation acquisition. The final models are now
+frozen for the independently reserved natural-hidden bridge05/5106 case and
+the six reused cross development cases: seven per arm, fourteen new rollouts.
+The original 5106 baseline ran once for 600 steps and failed; its outcome did
+not alter either arm's data, hyperparameters or final-checkpoint choice.
+Keep initial-state/image pairing, actual query logs and visibility timing in
+the evaluation. Do not infer generalization from two training groups or turn
+this exploratory result into a claim that the original three-group design ran.
