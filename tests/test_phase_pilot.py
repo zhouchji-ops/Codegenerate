@@ -2,8 +2,12 @@
 import sys,unittest
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
-from prepare_xr1_phase_pilot import anchors
+from prepare_xr1_phase_pilot import anchors,require_training_family
 class PhaseTests(unittest.TestCase):
+    def test_reserved_families_rejected(self):
+        require_training_family('t_grip');require_training_family('bridge')
+        for family in ('cross','elbow'):
+            with self.assertRaises(ValueError):require_training_family(family)
     def test_uniform_and_phase_same_count(self):
         u=anchors(240,100,140,8,False)
         p=anchors(240,100,140,8,True,4)
