@@ -1,4 +1,4 @@
-"""Isolated real-data XR1 one-step diagnostic. Not a benchmark or training recipe."""
+"""Isolated real-data XR1 short SFT pilot. Not an official benchmark recipe."""
 import argparse, json, time, gc, hashlib, os
 from pathlib import Path
 import numpy as np
@@ -22,7 +22,7 @@ code_root=Path(__file__).resolve().parents[1]
 if out==code_root or code_root in out.parents: raise ValueError('External outputs required')
 if not os.environ.get('CUDA_VISIBLE_DEVICES'): raise ValueError('Select an authorized GPU explicitly')
 out.mkdir(parents=True,exist_ok=False)
-report={'scope':'one real human batch optimizer diagnostic; not benchmark or improved policy'}
+report={'scope':'real human or reviewed-policy mixed short SFT pilot; no improvement claim'}
 def record(**kw):
     report.update(kw);(out/'diagnostic.json').write_text(json.dumps(report,indent=2));print(json.dumps(kw),flush=True)
 torch.set_num_threads(8);torch.manual_seed(20261112)
@@ -76,14 +76,24 @@ for item in manifest['samples']:
     meta=json.loads(path.with_suffix('.json').read_text())
     task=meta.get('task',meta.get('instruction'))
     assert task and np.isfinite(z['actions_raw12']).all()
-    rawstate=z['state_history_raw16']
+    from opentau.policies.xr1.obs_adapter import adapt_state
+    is14='state_history_raw14' in z
+    rawstate=z['state_history_raw14' if is14 else 'state_history_raw16']
+    assert rawstate.shape==(4,14 if is14 else 16) and np.isfinite(rawstate).all()
+    assert z['actions_raw12'].shape==(16,12)
     b={'state':torch.from_numpy(rawstate).unsqueeze(0).cuda(),
        'actions':torch.from_numpy(z['actions_raw12']).unsqueeze(0).cuda(),
        'real_action_dim':torch.tensor([12],device='cuda')}
-    independent=np.stack([np.concatenate([s[:3],entry.quat_xyzw_to_axis_angle(s[3:7]),
-        s[14:16],s[7:10],entry.quat_xyzw_to_axis_angle(s[10:14])]) for s in rawstate])
-    state=policy.prepare_state(b)
+    if is14:
+        assert item.get('source')=='policy_rollout_not_expert'
+        independent=rawstate
+        state=adapt_state(b['state'],state_adapter='identity',state_token_dim=60,quat_order='xyzw')
+    else:
+        independent=np.stack([np.concatenate([s[:3],entry.quat_xyzw_to_axis_angle(s[3:7]),
+            s[14:16],s[7:10],entry.quat_xyzw_to_axis_angle(s[10:14])]) for s in rawstate])
+        state=policy.prepare_state(b)
     assert np.max(np.abs(state[0,:,:14].cpu().numpy()-independent))<1e-5
+    assert torch.count_nonzero(state[:,:,14:])==0
     hist={k:z['images_'+n] for k,n in zip(entry.CAMERA_KEYS,names)}
     inputs=proc.apply_chat_template(client._build_messages(hist,task),tokenize=True,return_dict=True,
         return_tensors='pt',do_resize=False,state=state.float().cpu().numpy(),robot_type='robocasa365')
@@ -93,7 +103,7 @@ train=[x for x in prepared if x[0]['split']=='train']
 dev=[x for x in prepared if x[0]['split']=='dev']
 assert len(train)>=8 and len(dev)>=4
 assert {x[0]['episode_index'] for x in train}.isdisjoint({x[0]['episode_index'] for x in dev})
-record(train_samples=len(train),dev_samples=len(dev),steps_planned=a.steps,lr=a.lr,
+record(manifest_sha256=hashlib.sha256(manifest_path.read_bytes()).hexdigest(),train_samples=len(train),dev_samples=len(dev),steps_planned=a.steps,lr=a.lr,
        preprocessing='official evaluator PIL crop + HF AutoProcessor use_fast=False',
        training_repeat=1,train_prefix_prob=0,normalization='raw state dataset adapter; identity actions')
 params=policy.get_optim_params()
@@ -127,7 +137,7 @@ for step in range(a.steps):
     loss.backward();grad=torch.nn.utils.clip_grad_norm_(params,1.,error_if_nonfinite=True)
     optimizer.step();torch.cuda.synchronize()
     row={'step':step+1,'episode':sample[0]['episode_index'],'sample_step':sample[0]['sample_step'],
-         'loss':float(loss.detach()),'grad_norm':float(grad),'elapsed_s':time.monotonic()-start,
+         'source':sample[0].get('source','human_dataset'),'loss':float(loss.detach()),'grad_norm':float(grad),'elapsed_s':time.monotonic()-start,
          'gpu_allocated_gib':torch.cuda.memory_allocated()/1024**3}
     rows.append(row)
     with (out/'steps.jsonl').open('a') as f:f.write(json.dumps(row)+chr(10))
