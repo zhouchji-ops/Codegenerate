@@ -2,8 +2,22 @@
 import sys,unittest
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
-from prepare_xr1_phase_pilot import anchors,require_training_family,validate_unique_runs,validate_quarter_slots
+from prepare_xr1_phase_pilot import anchors,require_training_family,validate_unique_runs,validate_quarter_slots,balanced_anchors
 class PhaseTests(unittest.TestCase):
+    def test_balanced_stage_quotas_and_holding(self):
+        total={};offset=0
+        for i in range(9):
+            count=8 if i==0 else 7
+            chosen,labels=balanced_anchors(240,100,140,count,offset,list(range(140,180)))
+            self.assertEqual(len(chosen),count)
+            for t,label in zip(chosen,labels):
+                self.assertTrue(6<=t<=224)
+                if label=='verified_held_transport':self.assertTrue(140<=t<180)
+                total[label]=total.get(label,0)+1
+            offset+=count
+        self.assertEqual(set(total.values()),{16})
+    def test_unverified_transport_refused(self):
+        with self.assertRaises(ValueError):balanced_anchors(240,100,140,8,0,[])
     def test_duplicate_runs_rejected(self):
         validate_unique_runs([{'run':'a'},{'run':'b'}])
         with self.assertRaises(ValueError):validate_unique_runs([{'run':'a'},{'run':'a'}])
