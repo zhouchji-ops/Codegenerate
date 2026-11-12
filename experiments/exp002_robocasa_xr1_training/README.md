@@ -163,8 +163,13 @@ reported sink-cache discrepancy is 3.662 micrometers, below the 50-micrometer
 gate. Each trajectory also has sustained dual-finger lifting evidence.
 These checks support data usability, not expert optimality.
 
-Fixed train-probe and human-development losses are recorded at steps
-0/64/128/192/256 to expose overfitting or original-domain degradation.
+The preregistered plan was to record fixed train-probe and human-development
+losses at steps 0/64/128/192/256. In this execution a missed code insertion
+left only the step-0 probe: intermediate probe curves were not collected.
+Every optimizer-step loss is preserved. Final fixed-probe evaluation is run
+in a fresh process after loading all 407 expert tensors. The monitor call
+has now been fixed and guarded by a regression test; training was not repeated
+merely to reconstruct missing intermediate metrics.
 The final step is evaluated regardless of those values; no best-dev selection.
 Six further cross-family development initial states (cross00 through cross05,
 seeds 2001 through 2006) are frozen as a complete set before policy outcomes.
@@ -172,3 +177,29 @@ Evaluate the original model, human-only and mixed final checkpoints on all six;
 do not select only failed cases or touch the elbow final-test family.
 Their difficulty is unknown until baseline evaluation; calling them harder
 before measurement would be unwarranted.
+
+
+### 256-step run results (rollout comparison pending)
+
+Both arms completed 256 actual optimizer steps from the same original weights.
+All gradients remained finite. Initial fixed human train-probe and development
+loss arrays match exactly. Each arm peaked at 21.05 GiB; elapsed training plus
+final development evaluation was 184.17 s for human-only and 183.12 s for mixed.
+The fixed eight human-development means were:
+
+- Original: 0.3553604763.
+- Human-only 256: 0.3427186720.
+- Mixed 256: 0.3464587405.
+
+Both reduced this small development loss, but mixed was worse than human-only.
+This is not a task-success or generated-geometry generalization claim.
+Final weights and optimizer state are retained externally; the original
+checkpoint is unchanged. Six-case three-arm physical rollout evaluation is
+handled independently using the preregistered final checkpoints.
+
+Fresh-process reload verified all 407 expert tensors per arm; development loss
+arrays exactly match the in-training final evaluation. On the identical eight
+human training probes, mean loss was 0.1363142561 initially, 0.1153661637 after
+human-only, and 0.1318463283 after mixed. These endpoints do not replace the
+missing intermediate overfitting curves. All 512 step records have contiguous
+indices and finite loss/gradient norms.
