@@ -540,3 +540,36 @@ restore probes precede rollouts. Automatic physical/history review follows.
 These are policy pseudo-demonstrations, not experts. All failures are retained;
 no new SFT is authorized by a success flag alone. This extends training coverage
 without sampling, tuning against, or training on the sealed final set.
+
+### Eleven-group balanced refresh pilot
+
+The next fixed TRAIN batch6007..6012 completed6/6 original-policy successes
+at294/181/157/530/164/130 steps. All six pass sustained lift and released
+stability;6011 also passes strict bbox. Independent saved-model CPU contact
+checks confirm finite states, counter support and no positive target/robot
+contact or significant robot/obstacle penetration. This provides11 accepted
+policy demonstration groups together with the five earlier T groups.
+
+`prepare_xr1_natural11_pilot.py` replaces the same16 of256 slots as before:
+T and bridge families receive8 slots each, evenly assigned in fixed group
+order, with full-episode quantile anchors. The remaining192 human+48 older
+policy slots and eight human-dev samples are unchanged. Independent checks
+match every new NPZ array against its original HDF5 observation/action data.
+The accepted-manifest hash is
+`f535694178635a1883b39368dc3c594337ed51b7169d7e094c84392bfd1686e2`;
+training-manifest hash is
+`206c33b8a9058b9915441144b7c09dd4e27db28de992069a9ea156ec9760d9e0`.
+
+The first extraction stopped because the older phase helper rejected count1.
+Its incomplete output is retained; the corrected extractor uses exactly the
+same uniform quantile formula and supports a single midpoint anchor. Seven
+CPU tests check quotas, group/holdout rejection, preservation of240 slots and
+equivalence with the old formula for counts2..4. No sample/optimizer budget
+was changed to bypass the error.
+
+One fresh256-step SFT uses the original checkpoint, lr3e-6 and unchanged
+seed/noise/optimizer recipe. Only the final checkpoint is eligible. A separate
+407-key reload must reproduce frozen human-dev and training-probe arrays
+exactly before six DEVELOP6101..6106 rollouts start. Existing comparison-arm
+rollouts are reused. Sealed6201..6206 remain excluded from recipe selection.
+This section records preparation and execution protocol, not a new gain.
