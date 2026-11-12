@@ -431,7 +431,7 @@ five-success mean was280.4 steps, versus204.6 for new-uniform and203.2 for the
 older quarter-replay arm. Recovering phase-arm cross00 did not establish an
 overall benefit. These are reused development scenes, not untouched tests.
 
-### Frozen natural-scene refresh pilot (preparation pending)
+### Frozen natural-scene refresh pilot (training complete; evaluation running)
 
 A separate bounded data-refresh experiment uses five newly audited, naturally
 initialized T-shape scene_groups: seeds6001/6002/6004/6005/6006. The candidate
@@ -461,3 +461,19 @@ This contrasts two data mixtures with equal optimizer budgets, not a single
 causal visibility variable: scene identity, demonstrations and sampled action
 phases differ. Only five new T groups are represented. No new optimizer run
 or rollout outcome is claimed at this preparation stage.
+
+The sole new256-step run completed after actual-artifact preparation checks:
+only the sixteen prescribed rows differ; the other240 training rows and8dev
+rows remain exact. All candidate/review/safety/snapshot hashes passed. The
+new training-manifest SHA-256 is
+`1a7bc124f786bbc1c5d15d747cc842e82243b322c6f1d783cafe4f0b523ab967`.
+
+All256 contiguous step records are finite, monitors0/64/128/192/256 are present,
+and final expert/optimizer states were saved. A separate process reloaded all
+407 expert tensors and reproduced development/probe arrays exactly:
+- Human development flow loss:0.3403223567 (quarter control:0.3446245082).
+- Shared-human training probe:0.1188280778.
+- Training plus monitoring:207.84s; peak allocated GPU memory:21.05GiB.
+These are demonstration-loss diagnostics, not success-rate results. The final
+checkpoint remains fixed. New-six-development evaluation is now running for
+the oldquarter control and newnatural arm; original-model baseline is reused.
