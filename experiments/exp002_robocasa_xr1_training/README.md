@@ -75,7 +75,31 @@ python -B scripts/xr1_short_train.py --checkpoint "$XR1_MODEL" --batch "$ONE_BAT
 - seed10：完整 sim state 最大差1.234102，state14及三相机首帧不一致，因此不是严格配对，步数差也不能归因于训练。
 - seed11：完整sim state、state14、三相机首帧逐项完全一致；XML只在碰撞几何rgba上有差异。它支持这一初态的观测/物理状态对照，不代表大样本效果。
 - 同seed并不足以冻结环境；后续用保存XML+sim state建立规范重建初态，并逐帧核验。
-- 首个快照恢复探针state精确恢复，但与旧首帧平均相差约0.006–0.009灰度级，且旧动作前5步复演与旧轨迹不完全一致，说明仅XML和flattened state不足以声称旧过程严格重放。正在验证独立新重建之间的控制器/动力学一致性，不将这一步默认为完成。
+- 首个快照恢复探针state精确恢复，但与旧首帧平均相差约0.006–0.009灰度级，且旧动作前5步复演与旧轨迹不完全一致，说明仅XML和flattened state不足以声称旧过程严格重放。随后已验证两次独立新重建的首观察完全一致，且同一前5动作的完整sim state序列逐项相等；这只证明新规范协议内的重复性，不等于旧轨迹可严格回放。
 
 存储提速只改变HDF5图像chunk，不改变输入/动作/成功判定。最后一回合使用逐帧chunk，记录耗时降至1.28秒；不同回合的总耗时不能直接当同轨迹速度提升。32步日志恢复副本已与stdout的32条记录逐项完全核对，原始文件保留。
+
+## 规范同初态复测：已完成
+
+新增 `scripts/restore_rollout_snapshot.py`。先恢复保存XML和完整sim state，forward后重置各机器人composite controller，再强制刷新观测。两次独立重建均校验三首图和完整前5步同动作轨迹完全相等。
+
+首次短训模型复测在0次推理时因腕相机少量1灰度级渲染差异被硬检查拦下，失败记录保留。之后显式采用冻结规范首观察选项：物理state仍须精确相等，实时渲染与规范图最多允许每相机8个数值、1LSB的差异，然后将保存规范图作为首观察；后续实时渲染不替换。**最终成功执行的这一回合，替换前的三首图本身也已完全相等，实际像素替换差为0。** 不把该选项称为消除一般渲染随机性的方法。
+
+最终读回原模型与短训模型的两条新轨迹：
+- model XML 字节完全相同。
+- 完整初始sim state、state14以及三首图逐项完全相同。
+- 首16动作最大差0.021484375，说明训练权重确实生效，而非误加载原模型。
+- 原模型成功137步，短训模型也成功137步；**没有改善证据**。
+- 两回合约23.77秒、25.16秒；其中记录约0.96秒、1.00秒。计时不是独占硬件吞吐基准。
+
+这些新规范结果不覆盖旧不匹配seed10结果。全部为开发验证；未把新几何未完成物理审核的轨迹用于训练，也未扩大或偷看最终测试集。
+
+示例：
+```bash
+python -B scripts/restore_rollout_snapshot.py --snapshot "$BASELINE_ROLLOUT" --collector scripts/collect_rigid_rollout.py --canonical-reference "$CANONICAL_IMAGES" --probe-only
+# 先独立重复probe，核对完整同动作轨迹；模型服务须另行启动
+python -B scripts/restore_rollout_snapshot.py --snapshot "$BASELINE_ROLLOUT" --collector scripts/collect_rigid_rollout.py --canonical-reference "$CANONICAL_IMAGES" --freeze-initial-observation --xr1-repo "$XR1_REPO" --model "$XR1_MODEL" --output "$NEW_ROLLOUT" --port 10217 --seed 10 --horizon 600
+```
+
+采集脚本和适配器来自同仓库 exp001 工作分支；依赖该分支的文件，不能仅取本PR后声称所有示例独立可运行。
 
