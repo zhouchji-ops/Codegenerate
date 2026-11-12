@@ -573,3 +573,15 @@ seed/noise/optimizer recipe. Only the final checkpoint is eligible. A separate
 exactly before six DEVELOP6101..6106 rollouts start. Existing comparison-arm
 rollouts are reused. Sealed6201..6206 remain excluded from recipe selection.
 This section records preparation and execution protocol, not a new gain.
+
+Execution correction: the initial11-group run completed256 finite optimizer
+steps, but its legacy runtime entrypoint omitted periodic monitor calls and
+final training-probe output. The post-training gate correctly stopped before
+rollouts. This record is retained; missing intermediate metrics are not
+reconstructed or invented. A deterministic replay from the same original
+checkpoint uses the corrected monitored entrypoint with unchanged256 updates,
+samples, seeds and optimizer settings. Before any rollout, it must reproduce
+all407 final expert tensors exactly, contain monitors0/64/128/192/256, and pass
+fresh-process development/probe reload checks. A mismatch blocks evaluation
+and must be reported, not labeled equivalent. This replay consumes additional
+compute but is not256 extra continuation steps or an independent replicate.
