@@ -120,3 +120,32 @@ explicitly labeled. v2 still requires collision, reachability and actual
 cropped-visibility checks before collection and cannot be claimed a
 visibility-only manipulation. No observation SFT is launched just to fill
 the intended group count.
+
+### v2 outcome: safe poses, insufficient observation coverage
+
+Independent checks verified all six v2 poses and 186 sampled path states:
+zero new robot-contact samples, finite states, and no new joint-limit violations.
+Safety did not imply that the intended visibility condition was obtained.
+
+Actual model-crop retained target pixels (left / right / hand):
+- T02 minus: 0 / 0 / 0; T02 plus: 162 / 0 / 0.
+- T03 minus: 0 / 101 / 0; T03 plus: 0 / 178 / 0.
+- Reserved bridge02 validation minus: 21 / 91 / 463;
+  validation plus: 0 / 136 / 0.
+
+Therefore only T02 adds an initially unobservable training candidate. Together
+with the existing bridge00 engineering group there are at most two such groups;
+T02 still needs its actual policy trajectories and post-rollout admission.
+The reserved validation group does not test initial unobservability at all.
+
+The predefined observation-SFT gate is not satisfied. No optimizer run is
+started, no angle/seed is silently retuned, and the four visible-only variants
+are not redundantly collected to inflate sample counts. Only the T02
+visible/unobservable pair proceeds to its bounded two-rollout collection.
+Its successful acquisition, if achieved, is additional engineering evidence,
+not completion of the three-group training plus unobservable-validation design.
+
+For provenance, the old bridge00 query schedule was reconstructed from the
+frozen collector's every-16-step rule and stored history; it was not a separately
+recorded inference-call log. New collections record actual policy_query_steps
+directly without changing the policy, preprocessing, or action budget.
