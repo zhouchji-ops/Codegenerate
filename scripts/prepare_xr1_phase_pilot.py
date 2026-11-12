@@ -21,6 +21,18 @@ def require_training_family(family):
     if family not in ('t_grip','bridge'):
         raise ValueError('Only frozen T/bridge training families are allowed')
 
+def validate_unique_runs(rows):
+    if len({r['run'] for r in rows})!=len(rows):
+        raise ValueError('Accepted scene run IDs must be unique')
+
+def validate_quarter_slots(train):
+    if len(train)!=256:
+        raise ValueError('Expected exactly 256 training slots')
+    for i,row in enumerate(train):
+        expected='policy_rollout_not_expert' if i%4==3 else 'human_dataset'
+        if row.get('source')!=expected:
+            raise ValueError('Quarter-replay sources must match every-fourth-slot pattern')
+
 def main():
     p=argparse.ArgumentParser()
     for key in ('accepted-manifest','quarter-manifest','output'):p.add_argument('--'+key,type=Path,required=True)
@@ -28,6 +40,7 @@ def main():
     if out==root or root in out.parents:raise ValueError('External outputs required')
     reviewed=json.loads(a.accepted_manifest.read_text());rows=reviewed['accepted']
     if not 2<=len(rows)<=32:raise ValueError('Require 2..32 reviewed training scenes')
+    validate_unique_runs(rows)
     for r in rows:
         require_training_family(r['family'])
         assert r['split']=='train_candidate'
@@ -49,7 +62,7 @@ def main():
     train=[r for r in base['samples'] if r['split']=='train']
     dev=[r for r in base['samples'] if r['split']=='dev']
     assert len(train)==256 and len({r['episode_index'] for r in dev})==8
-    assert sum(r['source']=='policy_rollout_not_expert' for r in train)==64
+    validate_quarter_slots(train)
     out.mkdir(parents=True,exist_ok=False)
     report={'accepted_manifest_sha256':digest(a.accepted_manifest),
             'quarter_manifest_sha256':digest(a.quarter_manifest),'steps':256,'human_slots':192,
@@ -83,6 +96,7 @@ def main():
                         sample_step=t,source='policy_rollout_not_expert')
                     schedule[4*slot+3]=row;selection.append(row);slot+=1
         assert slot==64
+        validate_quarter_slots(schedule)
         assert all(schedule[i]==train[i] for i in range(256) if i%4!=3)
         assert {r['episode_index'] for r in schedule}.isdisjoint({r['episode_index'] for r in dev})
         (out/(arm+'_manifest.json')).write_text(json.dumps({**report,'arm':arm,'samples':schedule+dev},indent=2))
