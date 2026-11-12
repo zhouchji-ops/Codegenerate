@@ -320,3 +320,28 @@ Both 256-step arms were launched only after these checks. A separate schedule
 audit confirms identical human slots, identical development samples and
 identical per-episode counts between arms. The preparation entry point now
 also rejects any family other than T/bridge, even if a manifest is mislabeled.
+
+### New-scene uniform versus phase: completed training
+
+Both arms completed 256 updates, saved expert and optimizer states, and passed
+fresh-process reload checks of all 407 expert keys. Reloaded eight-development
+and shared-human-probe arrays exactly match training-end arrays. All 512
+optimizer records are finite; 0/64/128/192/256 monitoring is present for both.
+
+- New-scene uniform: human dev 0.3541095592; human train-probe 0.1271307115.
+- New-scene phase: human dev 0.3444956187; human train-probe 0.1211182429.
+
+Both started with dev 0.3553604763 and probe 0.1363142561. Phase selection has
+lower human-development loss than uniform on these same new scenes, but neither
+loss alone demonstrates improved task success. Training with monitoring took
+207.21 / 207.60 s, each peaking at 21.05 GiB. Final step 256 remains the checkpoint
+for both, regardless of intermediate fluctuations.
+
+Independent review identified two future-input guard gaps: an accepted manifest
+could contain duplicate run IDs, and a base schedule could contain 64 generated
+slots in positions other than every fourth slot. Direct audits of the actual
+run manifests confirmed 9 unique runs and exact 192-human/64-generated source
+patterns in the base and both new arms, so this run is unaffected. Explicit
+duplicate-run and shifted-slot rejection tests/guards have been added without
+changing the running experiments. Twelve new fixed-development rollouts are
+delegated, reusing old controls rather than retraining or rerunning them.
