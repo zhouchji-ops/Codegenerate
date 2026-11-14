@@ -23,6 +23,14 @@ for name in ("mug", "scoop", "turner"):
         pos = env.sim.data.body_xpos[env.obj_body_id["obj"]].copy()
         info = dict(asset=name,initialized=True,object_position=pos.tolist(),finite=bool(np.isfinite(pos).all()),
                     initial_success=bool(env._check_success()),instruction=env.get_ep_meta()["lang"])
+        predictions = root / "predictions.json"
+        if predictions.is_file():
+            expected = json.loads(predictions.read_text())["objects"][name]["central"]
+            sim_model = env.sim.model
+            target = env.obj_body_id["obj"]
+            mass = float(sim_model.body_subtreemass[target])
+            info["loaded_mass_kg"] = mass
+            info["predicted_mass_matches"] = bool(np.isclose(mass, expected["mass_kg"], rtol=1e-5))
         frames = [obs["robot0_"+c+"_image"][::-1] for c in ["agentview_left","agentview_right","eye_in_hand"]]
         Image.fromarray(np.concatenate(frames,axis=1)).save(root/(name+"_kitchen.jpg"),quality=94)
         rows.append(info)
