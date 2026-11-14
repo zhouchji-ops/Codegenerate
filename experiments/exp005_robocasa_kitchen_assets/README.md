@@ -4,12 +4,27 @@
 
 本轮补充了三件资产的净重、质心、干湿摩擦、载荷挠度与薄边间隙预测，可从[物理预测与新模型入口](物理预测.md)继续。下文的 290、105、81 g 和八次编程用量属于首次交付。
 
+## 本地工作目录
+
+在工作区的 `kitchen_asset_trial/` 下按用途查找。根目录的两个 ZIP 是已发布的阶段交付包，包内的路径对应当时的版本。
+
+| 目录 | 内容 |
+| --- | --- |
+| `token_usage/` | 用量总账、逐次原始事件与提示词、重建脚本；`snapshots/` 留存两个阶段的原始汇总 |
+| `modeling/` | 三维建模、材质、碰撞和物理预测的 Python 源码 |
+| `refs/` | 实物参考图、来源及旧版和官方同类资产 |
+| `output/` | 初版模型与实物、旧版、官方资产的四列对照图 |
+| `calibrated/` | 容量与接触校准后的模型、厨房图和物理检查 |
+| `predicted/` | 写入预测质量、质心及惯量的 MJCF，参数和复核结果 |
+| `logs/` | `build/` 为构建与导出日志，`render/` 为渲染日志 |
+| `.runtime/` | 工具、Git 工作树、传输包及历史生成副本 |
+
 ## 从哪里接手
 
 - 交付标识为 `kitchen_visual_trial_20261114/calibrated`。授权实验机的用户主目录下有同名目录。物理资产在 `calibrated/sim/{mug,scoop,turner}/model.xml`，相邻 OBJ 和 PNG 需要整目录保留。
 - 本地工作区的 `kitchen_asset_trial/calibrated` 有最终 GLB、可编辑的 Blender 文件、MJCF 和三相机截图。`output/comparison.jpg` 依次展示品牌实物、旧模型、RoboCasa 同类资产和本次模型。各列按外形独立取景，图片不能用来比较实际尺寸。`calibrated/kitchen_views.jpg` 是最终资产在仿真里的实际大小和外观。
 - 对照旧模型为 `handled_cup_v02`、`measuring_scoop_v02`、`slotted_turner_v02`。RoboCasa 对照选用 `objaverse/mug/mug_0`、`lightwheel/measuring_cup/MeasuringCup001`、`objaverse/spatula/spatula_0`。代码使用单张 2000 × 2000 商品图作各自的外形参考，从头生成网格。官方样例属于相同用途类别，具体款式不同。
-- 原始与修正后的物理测试分别见 `calibrated/physics_before.json` 和 `calibrated/physics_ablation.json`。基础检查见 `calibrated/sim/validation.json`，场景与首帧见 `calibrated/kitchen.json` 及三个厨房 JPG。本地 `modeling/usage.json` 与八个 CLI 事件文件可复核 token。原始数据在仓库外保存。
+- 原始与修正后的物理测试分别见 `calibrated/physics_before.json` 和 `calibrated/physics_ablation.json`。基础检查见 `calibrated/sim/validation.json`，场景与首帧见 `calibrated/kitchen.json` 及三个厨房 JPG。逐次调用与总数见 [Token 用量账本](token_usage/README.md)，原始事件位于外部实验目录的 `token_usage/calls/`。
 
 ## 尺寸和功能
 
